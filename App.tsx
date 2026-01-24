@@ -40,17 +40,22 @@ export default function App() {
   const [notification, setNotification] = useState<{msg: string, type: 'success' | 'error'} | null>(null);
 
   useEffect(() => {
-    const localProducts = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
-    const localUser = localStorage.getItem(STORAGE_KEYS.USER);
-    const localCart = localStorage.getItem(STORAGE_KEYS.CART);
-    const localOrders = localStorage.getItem(STORAGE_KEYS.ORDERS);
-    const localRepairs = localStorage.getItem(STORAGE_KEYS.REPAIRS);
+    try {
+      const localProducts = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+      const localUser = localStorage.getItem(STORAGE_KEYS.USER);
+      const localCart = localStorage.getItem(STORAGE_KEYS.CART);
+      const localOrders = localStorage.getItem(STORAGE_KEYS.ORDERS);
+      const localRepairs = localStorage.getItem(STORAGE_KEYS.REPAIRS);
 
-    setProducts(localProducts ? JSON.parse(localProducts) : INITIAL_PRODUCTS);
-    setUser(localUser ? JSON.parse(localUser) : null);
-    setCart(localCart ? JSON.parse(localCart) : []);
-    setOrders(localOrders ? JSON.parse(localOrders) : []);
-    setRepairs(localRepairs ? JSON.parse(localRepairs) : []);
+      setProducts(localProducts ? JSON.parse(localProducts) : INITIAL_PRODUCTS);
+      setUser(localUser ? JSON.parse(localUser) : null);
+      setCart(localCart ? JSON.parse(localCart) : []);
+      setOrders(localOrders ? JSON.parse(localOrders) : []);
+      setRepairs(localRepairs ? JSON.parse(localRepairs) : []);
+    } catch (e) {
+      console.error("Local storage initialization failed:", e);
+      setProducts(INITIAL_PRODUCTS);
+    }
   }, []);
 
   useEffect(() => {
@@ -202,7 +207,7 @@ export default function App() {
             {['home', 'store', 'repair', 'about'].map((v) => (
               <button 
                 key={v} 
-                onClick={() => navigateTo(v)} 
+                onClick={() => navigateTo(v === 'about' ? 'home' : v)} 
                 className="hover:translate-x-4 transition-transform duration-300"
               >
                 {v}
@@ -223,4 +228,3 @@ export default function App() {
     </div>
   );
 }
-
