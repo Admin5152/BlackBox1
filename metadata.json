@@ -1,0 +1,7 @@
+{
+  "name": " Black Box - Tech Sales & Repair",
+  "description": "A premium, minimalist e-commerce and repair platform for Apple devices and gadgets, tailored for the Ghanaian market.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

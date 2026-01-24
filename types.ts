@@ -1,0 +1,63 @@
+
+export type Category = 'Phones' | 'Laptops' | 'Accessories' | 'Consoles' | 'Audio';
+
+export interface ProductVariant {
+  name: string; // e.g., "Color", "Storage"
+  options: string[]; // e.g., ["Space Gray", "Silver"], ["128GB", "256GB"]
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  category: Category;
+  price: number;
+  description: string;
+  image: string;
+  stock: number;
+  featured?: boolean;
+  specs?: string[];
+  variants?: ProductVariant[];
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  role: 'user' | 'admin';
+  address?: string;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
+  selectedOptions?: Record<string, string>;
+}
+
+export interface Order {
+  id: string;
+  userId: string;
+  userName: string;
+  items: CartItem[];
+  total: number;
+  status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
+  date: string;
+  paymentMethod: string;
+}
+
+export interface RepairRequest {
+  id: string;
+  userId: string;
+  userName: string;
+  device: string;
+  issue: string;
+  status: 'Received' | 'Diagnosing' | 'In Repair' | 'Ready' | 'Completed';
+  date: string;
+  aiDiagnosis?: string;
+  estimatedCost?: string;
+  imageUrl?: string;
+}
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  text: string;
+}
