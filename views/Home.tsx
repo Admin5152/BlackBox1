@@ -114,6 +114,8 @@ export const Home: React.FC<HomeProps> = ({
               isWishlisted={wishlist.includes(p.id)}
               onToggleWishlist={toggleWishlist}
               onAddToCart={onAddToCart}
+              isCompared={false}
+              onToggleCompare={() => {}}
             />
           ))}
         </div>

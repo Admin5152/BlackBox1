@@ -14,6 +14,8 @@ interface StoreProps {
   onQuickView: (product: Product) => void;
   wishlist: string[];
   toggleWishlist: (productId: string) => void;
+  compareIds: string[];
+  onToggleCompare: (productId: string) => void;
   onAddToCart: (p: Product) => void;
 }
 
@@ -26,6 +28,8 @@ export const Store: React.FC<StoreProps> = ({
   onQuickView,
   wishlist,
   toggleWishlist,
+  compareIds,
+  onToggleCompare,
   onAddToCart
 }) => {
   const [minPrice, setMinPrice] = useState<number>(0);
@@ -151,6 +155,8 @@ export const Store: React.FC<StoreProps> = ({
                 onQuickView={onQuickView}
                 isWishlisted={wishlist.includes(p.id)}
                 onToggleWishlist={toggleWishlist}
+                isCompared={compareIds.includes(p.id)}
+                onToggleCompare={onToggleCompare}
                 onAddToCart={onAddToCart}
               />
             ))}

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Heart, Star, ShoppingCart, Eye } from 'lucide-react';
+import { Heart, Star, ShoppingCart, Eye, Scale } from 'lucide-react';
 import { Product } from '../types';
 import { formatCurrency } from '../lib/utils';
 
@@ -11,6 +11,8 @@ interface ProductCardProps {
   isWishlisted: boolean;
   onToggleWishlist: (productId: string) => void;
   onAddToCart: (product: Product) => void;
+  isCompared: boolean;
+  onToggleCompare: (productId: string) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ 
@@ -19,7 +21,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   onQuickView, 
   isWishlisted, 
   onToggleWishlist,
-  onAddToCart
+  onAddToCart,
+  isCompared,
+  onToggleCompare
 }) => {
   const oldPrice = product.discount ? product.price / (1 - product.discount / 100) : null;
 
@@ -38,15 +42,27 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         )}
       </div>
 
-      <button 
-        className={`absolute top-4 right-4 z-20 transition-all p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/5 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-white' : 'text-white/40 hover:text-white'}`}
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleWishlist(product.id);
-        }}
-      >
-        <Heart size={16} className={isWishlisted ? 'fill-white' : ''} />
-      </button>
+      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+        <button 
+          className={`transition-all p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/5 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-white' : 'text-white/40 hover:text-white'}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleWishlist(product.id);
+          }}
+        >
+          <Heart size={16} className={isWishlisted ? 'fill-white' : ''} />
+        </button>
+        <button 
+          className={`transition-all p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/5 hover:scale-110 active:scale-95 ${isCompared ? 'text-[#D4AF37] border-[#D4AF37]/40' : 'text-white/40 hover:text-white'}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleCompare(product.id);
+          }}
+          title="Compare Products"
+        >
+          <Scale size={16} />
+        </button>
+      </div>
 
       {/* Image Area */}
       <div className="aspect-[4/5] relative overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-6">

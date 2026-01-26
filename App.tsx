@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, Activity } from 'lucide-react';
+import { X, CheckCircle2, Activity, Scale } from 'lucide-react';
 import { Product, User, CartItem, Category, RepairRequest, Order } from './types';
 import { INITIAL_PRODUCTS } from './constants';
 import { Navbar } from './components/Navbar';
@@ -15,6 +15,7 @@ import { Cart } from './views/Cart';
 import { PulseAI } from './components/PulseAI';
 import { CartSidebar } from './components/CartSidebar';
 import { QuickViewModal } from './components/QuickViewModal';
+import { CompareModal } from './components/CompareModal';
 import { generateId } from './lib/utils';
 
 const STORAGE_KEYS = {
@@ -23,7 +24,8 @@ const STORAGE_KEYS = {
   CART: 'bb_cart_v2',
   ORDERS: 'bb_orders_v2',
   REPAIRS: 'bb_repairs_v2',
-  WISHLIST: 'bb_wishlist_v2'
+  WISHLIST: 'bb_wishlist_v2',
+  COMPARE: 'bb_compare_v2'
 };
 
 export default function App() {
@@ -33,12 +35,14 @@ export default function App() {
   const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [wishlist, setWishlist] = useState<string[]>([]);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [repairs, setRepairs] = useState<RepairRequest[]>([]);
   
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
@@ -56,6 +60,7 @@ export default function App() {
       const localOrders = localStorage.getItem(STORAGE_KEYS.ORDERS);
       const localRepairs = localStorage.getItem(STORAGE_KEYS.REPAIRS);
       const localWishlist = localStorage.getItem(STORAGE_KEYS.WISHLIST);
+      const localCompare = localStorage.getItem(STORAGE_KEYS.COMPARE);
 
       if (localProducts) setProducts(JSON.parse(localProducts));
       if (localUser) setUser(JSON.parse(localUser));
@@ -63,6 +68,7 @@ export default function App() {
       if (localOrders) setOrders(JSON.parse(localOrders));
       if (localRepairs) setRepairs(JSON.parse(localRepairs));
       if (localWishlist) setWishlist(JSON.parse(localWishlist));
+      if (localCompare) setCompareIds(JSON.parse(localCompare));
     } catch (e) {
       console.error("Local storage synchronization failure:", e);
     }
@@ -76,7 +82,8 @@ export default function App() {
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
     localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify(repairs));
     localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify(wishlist));
-  }, [products, user, cart, orders, repairs, wishlist]);
+    localStorage.setItem(STORAGE_KEYS.COMPARE, JSON.stringify(compareIds));
+  }, [products, user, cart, orders, repairs, wishlist, compareIds]);
 
   const notify = (msg: string, type: 'success' | 'error' = 'success') => {
     setNotification({ msg, type });
@@ -115,6 +122,21 @@ export default function App() {
         notify('Added to Wishlist');
         return [...prev, productId];
       }
+    });
+  };
+
+  const toggleCompare = (productId: string) => {
+    setCompareIds(prev => {
+      if (prev.includes(productId)) {
+        notify('Unit removed from comparison');
+        return prev.filter(id => id !== productId);
+      }
+      if (prev.length >= 4) {
+        notify('Comparison limit reached (4 units max)', 'error');
+        return prev;
+      }
+      notify('Unit added to comparison bench');
+      return [...prev, productId];
     });
   };
 
@@ -224,6 +246,8 @@ export default function App() {
             onQuickView={handleQuickView}
             wishlist={wishlist}
             toggleWishlist={toggleWishlist}
+            compareIds={compareIds}
+            onToggleCompare={toggleCompare}
             onAddToCart={(p) => addToCart(p)}
           />
         )}
@@ -252,6 +276,16 @@ export default function App() {
         )}
       </main>
 
+      {/* Compare Floating Trigger */}
+      {compareIds.length > 0 && view === 'store' && (
+        <button 
+          onClick={() => setIsCompareOpen(true)}
+          className="fixed bottom-32 left-1/2 -translate-x-1/2 z-[100] px-8 py-5 bg-[#D4AF37] text-black font-black rounded-2xl text-[10px] uppercase tracking-[0.3em] flex items-center gap-4 shadow-[0_20px_60px_rgba(212,175,55,0.3)] animate-in slide-in-from-bottom-10"
+        >
+          <Scale size={20} /> Compare Bench ({compareIds.length})
+        </button>
+      )}
+
       <CartSidebar 
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
@@ -265,6 +299,14 @@ export default function App() {
         isOpen={isQuickViewOpen}
         onClose={() => setIsQuickViewOpen(false)}
         product={quickViewProduct}
+        onAddToCart={addToCart}
+      />
+
+      <CompareModal 
+        isOpen={isCompareOpen}
+        onClose={() => setIsCompareOpen(false)}
+        products={products.filter(p => compareIds.includes(p.id))}
+        onRemove={toggleCompare}
         onAddToCart={addToCart}
       />
 
