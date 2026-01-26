@@ -11,8 +11,10 @@ import { Repair } from './views/Repair';
 import { Store } from './views/Store';
 import { Auth } from './views/Auth';
 import { Profile } from './views/Profile';
+import { Cart } from './views/Cart';
 import { PulseAI } from './components/PulseAI';
 import { CartSidebar } from './components/CartSidebar';
+import { QuickViewModal } from './components/QuickViewModal';
 import { generateId } from './lib/utils';
 
 const STORAGE_KEYS = {
@@ -20,14 +22,17 @@ const STORAGE_KEYS = {
   USER: 'bb_user_v2',
   CART: 'bb_cart_v2',
   ORDERS: 'bb_orders_v2',
-  REPAIRS: 'bb_repairs_v2'
+  REPAIRS: 'bb_repairs_v2',
+  WISHLIST: 'bb_wishlist_v2'
 };
 
 export default function App() {
   const [view, setView] = useState('home');
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null);
-  const [products, setProducts] = useState<Product[]>([]);
+  
+  const [products, setProducts] = useState<Product[]>(INITIAL_PRODUCTS);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [wishlist, setWishlist] = useState<string[]>([]);
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [repairs, setRepairs] = useState<RepairRequest[]>([]);
@@ -39,6 +44,10 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
   const [notification, setNotification] = useState<{msg: string, type: 'success' | 'error'} | null>(null);
 
+  // Quick View State
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+
   useEffect(() => {
     try {
       const localProducts = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
@@ -46,15 +55,16 @@ export default function App() {
       const localCart = localStorage.getItem(STORAGE_KEYS.CART);
       const localOrders = localStorage.getItem(STORAGE_KEYS.ORDERS);
       const localRepairs = localStorage.getItem(STORAGE_KEYS.REPAIRS);
+      const localWishlist = localStorage.getItem(STORAGE_KEYS.WISHLIST);
 
-      setProducts(localProducts ? JSON.parse(localProducts) : INITIAL_PRODUCTS);
-      setUser(localUser ? JSON.parse(localUser) : null);
-      setCart(localCart ? JSON.parse(localCart) : []);
-      setOrders(localOrders ? JSON.parse(localOrders) : []);
-      setRepairs(localRepairs ? JSON.parse(localRepairs) : []);
+      if (localProducts) setProducts(JSON.parse(localProducts));
+      if (localUser) setUser(JSON.parse(localUser));
+      if (localCart) setCart(JSON.parse(localCart));
+      if (localOrders) setOrders(JSON.parse(localOrders));
+      if (localRepairs) setRepairs(JSON.parse(localRepairs));
+      if (localWishlist) setWishlist(JSON.parse(localWishlist));
     } catch (e) {
-      console.error("Local storage initialization failed:", e);
-      setProducts(INITIAL_PRODUCTS);
+      console.error("Local storage synchronization failure:", e);
     }
   }, []);
 
@@ -65,7 +75,8 @@ export default function App() {
     localStorage.setItem(STORAGE_KEYS.CART, JSON.stringify(cart));
     localStorage.setItem(STORAGE_KEYS.ORDERS, JSON.stringify(orders));
     localStorage.setItem(STORAGE_KEYS.REPAIRS, JSON.stringify(repairs));
-  }, [products, user, cart, orders, repairs]);
+    localStorage.setItem(STORAGE_KEYS.WISHLIST, JSON.stringify(wishlist));
+  }, [products, user, cart, orders, repairs, wishlist]);
 
   const notify = (msg: string, type: 'success' | 'error' = 'success') => {
     setNotification({ msg, type });
@@ -77,29 +88,60 @@ export default function App() {
     if (productId) setSelectedProductId(productId);
     setView(newView);
     setIsMobileMenuOpen(false);
+    setIsCartOpen(false);
   };
 
-  const addToCart = (product: Product, options: Record<string, string>, qty: number) => {
+  const addToCart = (product: Product, options: Record<string, string> = {}, qty: number = 1) => {
     setCart(prev => {
       const existingId = `${product.id}-${JSON.stringify(options)}`;
-      const existing = prev.find(p => `${p.id}-${JSON.stringify(p.selectedOptions)}` === existingId);
-      if (existing) {
-        return prev.map(p => `${p.id}-${JSON.stringify(p.selectedOptions)}` === existingId ? { ...p, quantity: p.quantity + qty } : p);
+      const existingIndex = prev.findIndex(p => `${p.id}-${JSON.stringify(p.selectedOptions)}` === existingId);
+      if (existingIndex > -1) {
+        const updated = [...prev];
+        updated[existingIndex].quantity += qty;
+        return updated;
       }
       return [...prev, { ...product, quantity: qty, selectedOptions: options }];
     });
-    setIsCartOpen(true);
-    notify(`${product.name} added to bag`);
+    notify(`${product.name} added to your bag`);
+  };
+
+  const toggleWishlist = (productId: string) => {
+    setWishlist(prev => {
+      const exists = prev.includes(productId);
+      if (exists) {
+        notify('Removed from Wishlist');
+        return prev.filter(id => id !== productId);
+      } else {
+        notify('Added to Wishlist');
+        return [...prev, productId];
+      }
+    });
+  };
+
+  const handleQuickView = (product: Product) => {
+    setQuickViewProduct(product);
+    setIsQuickViewOpen(true);
   };
 
   const removeFromCart = (uniqueId: string) => {
     setCart(prev => prev.filter(p => `${p.id}-${JSON.stringify(p.selectedOptions)}` !== uniqueId));
   };
 
+  const updateQuantity = (id: string, options: Record<string, string> | undefined, delta: number) => {
+    setCart(prev => prev.map(item => {
+      const matchesId = item.id === id;
+      const matchesOptions = JSON.stringify(item.selectedOptions) === JSON.stringify(options);
+      if (matchesId && matchesOptions) {
+        const newQty = Math.max(1, item.quantity + delta);
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    }));
+  };
+
   const handleCheckout = (total: number) => {
     if (!user) {
       navigateTo('auth');
-      setIsCartOpen(false);
       return;
     }
     const newOrder: Order = {
@@ -114,14 +156,15 @@ export default function App() {
     };
     setOrders([newOrder, ...orders]);
     setCart([]);
-    setIsCartOpen(false);
     navigateTo('profile');
-    notify('Order Placed Successfully!', 'success');
+    notify('Elite Shipment Authorized!', 'success');
   };
 
-  const updateOrderStatus = (orderId: string, status: Order['status']) => {
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
-    notify(`Order ${orderId} status: ${status}`, 'success');
+  const handleSearch = (q: string) => {
+    setSearchQuery(q);
+    if (view !== 'store') {
+      setView('store');
+    }
   };
 
   const currentProduct = products.find(p => p.id === selectedProductId);
@@ -133,9 +176,9 @@ export default function App() {
         user={user} 
         cart={cart} 
         searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery} 
+        setSearchQuery={handleSearch} 
         navigateTo={navigateTo} 
-        setIsCartOpen={setIsCartOpen}
+        setIsCartOpen={() => setIsCartOpen(true)}
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
@@ -145,6 +188,20 @@ export default function App() {
             products={products} 
             navigateTo={navigateTo} 
             setSelectedCategory={setSelectedCategory} 
+            onQuickView={handleQuickView}
+            wishlist={wishlist}
+            toggleWishlist={toggleWishlist}
+            onAddToCart={(p) => addToCart(p)}
+          />
+        )}
+        {view === 'cart' && (
+          <Cart 
+            cart={cart}
+            products={products}
+            updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart}
+            handleCheckout={handleCheckout}
+            navigateTo={navigateTo}
           />
         )}
         {view === 'product-detail' && currentProduct && (
@@ -153,6 +210,8 @@ export default function App() {
             relatedProducts={products.filter(p => p.category === currentProduct.category && p.id !== currentProduct.id).slice(0, 4)}
             navigateTo={navigateTo}
             addToCart={addToCart}
+            isWishlisted={wishlist.includes(currentProduct.id)}
+            onToggleWishlist={toggleWishlist}
           />
         )}
         {view === 'store' && (
@@ -162,6 +221,10 @@ export default function App() {
             selectedCategory={selectedCategory} 
             setSelectedCategory={setSelectedCategory}
             navigateTo={navigateTo}
+            onQuickView={handleQuickView}
+            wishlist={wishlist}
+            toggleWishlist={toggleWishlist}
+            onAddToCart={(p) => addToCart(p)}
           />
         )}
         {view === 'repair' && (
@@ -179,36 +242,46 @@ export default function App() {
             user={user} 
             repairs={repairs} 
             orders={orders} 
+            wishlist={wishlist}
+            products={products}
             setUser={setUser} 
             navigateTo={navigateTo} 
-            updateOrderStatus={updateOrderStatus}
+            toggleWishlist={toggleWishlist}
+            onAddToCart={(p) => addToCart(p)}
           />
         )}
       </main>
 
       <CartSidebar 
-        isOpen={isCartOpen} 
-        onClose={() => setIsCartOpen(false)} 
-        cart={cart} 
-        removeFromCart={removeFromCart} 
-        handleCheckout={handleCheckout} 
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        cart={cart}
+        removeFromCart={removeFromCart}
+        updateQuantity={updateQuantity}
+        handleCheckout={handleCheckout}
+      />
+
+      <QuickViewModal 
+        isOpen={isQuickViewOpen}
+        onClose={() => setIsQuickViewOpen(false)}
+        product={quickViewProduct}
+        onAddToCart={addToCart}
       />
 
       <PulseAI isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
 
-      {/* Mobile Menu Overlay */}
+      {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-2xl flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
           <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-8 right-8 p-4 bg-white/5 rounded-full hover:bg-white/10 transition-colors">
             <X size={32}/>
           </button>
-          <h1 className="text-4xl font-black italic uppercase tracking-tighter mb-12 opacity-50">BLACKBOX</h1>
           <div className="flex flex-col gap-10 text-3xl font-black italic uppercase tracking-widest">
-            {['home', 'store', 'repair', 'about'].map((v) => (
+            {['home', 'store', 'cart', 'repair', 'profile'].map((v) => (
               <button 
                 key={v} 
-                onClick={() => navigateTo(v === 'about' ? 'home' : v)} 
-                className="hover:translate-x-4 transition-transform duration-300"
+                onClick={() => navigateTo(v === 'profile' ? 'profile' : v)} 
+                className="hover:text-white/40 transition-colors"
               >
                 {v}
               </button>
@@ -218,9 +291,9 @@ export default function App() {
       )}
 
       {notification && (
-        <div className={`fixed top-24 right-8 z-[110] px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-right-10 duration-500 flex items-center gap-5 ${notification.type === 'success' ? 'bg-white text-black' : 'bg-red-600 text-white'}`}>
-          {notification.type === 'success' ? <CheckCircle2 size={18}/> : <Activity size={18}/>}
-          <p className="font-black text-sm uppercase tracking-widest">{notification.msg}</p>
+        <div className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[130] px-8 py-4 rounded-2xl shadow-2xl animate-in slide-in-from-bottom-10 duration-500 flex items-center gap-5 glass bg-black/90 border border-white/10`}>
+          {notification.type === 'success' ? <CheckCircle2 size={18} className="text-white"/> : <Activity size={18} className="text-red-500"/>}
+          <p className="font-bold text-[10px] uppercase tracking-widest">{notification.msg}</p>
         </div>
       )}
 

@@ -3,86 +3,75 @@ import { Product } from './types';
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
-    id: 'BB-001',
-    name: 'iPhone 15 Pro Max',
-    category: 'Phones',
-    price: 18500,
-    description: 'Forged in titanium and featuring the groundbreaking A17 Pro chip. The ultimate iPhone experience.',
-    image: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?auto=format&fit=crop&q=80&w=800',
-    stock: 8,
-    featured: true,
-    specs: ['256GB Storage', 'A17 Pro Chip', '48MP Main Camera', 'USB-C Charging'],
-    variants: [
-      { name: 'Color', options: ['Natural Titanium', 'Blue Titanium', 'White Titanium', 'Black Titanium'] },
-      { name: 'Storage', options: ['256GB', '512GB', '1TB'] }
-    ]
-  },
-  {
-    id: 'BB-002',
-    name: 'MacBook Pro 14-inch',
-    category: 'Laptops',
-    price: 24500,
-    description: 'The world’s best laptop display. A pro laptop like no other, now with the M3 family of chips.',
-    image: 'https://images.unsplash.com/photo-1517336714467-d13a2323485d?auto=format&fit=crop&q=80&w=800',
-    stock: 4,
-    featured: true,
-    specs: ['Apple M3 Pro', '18GB RAM', '512GB SSD', 'Liquid Retina XDR'],
-    variants: [
-      { name: 'Color', options: ['Space Black', 'Silver'] },
-      { name: 'Chip', options: ['M3', 'M3 Pro', 'M3 Max'] }
-    ]
-  },
-  {
-    id: 'BB-003',
-    name: 'AirPods Max',
-    category: 'Audio',
-    price: 6800,
-    description: 'The ultimate personal listening experience is here. High-fidelity audio meets industry-leading Active Noise Cancellation.',
-    image: 'https://images.unsplash.com/photo-1613040809024-b4ef7ba99bc3?auto=format&fit=crop&q=80&w=800',
-    stock: 12,
-    specs: ['Active Noise Cancellation', 'Spatial Audio', '20 Hours Battery'],
-    variants: [
-      { name: 'Color', options: ['Silver', 'Space Gray', 'Sky Blue', 'Pink', 'Green'] }
-    ]
-  },
-  {
-    id: 'BB-004',
-    name: 'PlayStation 5 Slim',
-    category: 'Consoles',
-    price: 8200,
-    description: 'Experience lightning-fast loading and deeper immersion with haptic feedback and 3D Audio.',
-    image: 'https://images.unsplash.com/photo-1606144042614-b2417e99c4e3?auto=format&fit=crop&q=80&w=800',
-    stock: 6,
-    specs: ['1TB SSD', '4K Gaming', 'DualSense Controller', 'High Speed HDMI'],
-    variants: [
-      { name: 'Version', options: ['Disc Version', 'Digital Version'] }
-    ]
-  },
-  {
-    id: 'BB-005',
-    name: 'iPad Pro 12.9 M2',
-    category: 'Laptops',
-    price: 16500,
-    description: 'Astonishing performance. Incredibly advanced displays. Superfast wireless connectivity.',
-    image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&q=80&w=800',
-    stock: 5,
-    specs: ['M2 Chip', 'Liquid Retina XDR', 'Thunderbolt 4', 'Face ID'],
-    variants: [
-      { name: 'Color', options: ['Space Gray', 'Silver'] },
-      { name: 'Connectivity', options: ['Wi-Fi', 'Wi-Fi + Cellular'] }
-    ]
-  },
-  {
-    id: 'BB-006',
-    name: 'iPhone 13',
-    category: 'Phones',
-    price: 9200,
-    description: 'Your new superpower. Advanced dual-camera system. Lightning-fast A15 Bionic chip.',
-    image: 'https://images.unsplash.com/photo-1633114127188-99b4dd741180?auto=format&fit=crop&q=80&w=800',
+    id: 'BB-101',
+    name: 'iPhone 14 128GB Midnight Black Unlocked',
+    category: 'iPhone',
+    price: 7999,
+    discount: 16,
+    rating: 4.2,
+    reviewCount: 678,
+    description: 'Advanced dual-camera system. A15 Bionic chip. Ceramic Shield.',
+    image: 'https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?auto=format&fit=crop&q=80&w=800',
     stock: 15,
-    specs: ['128GB Storage', 'A15 Bionic', 'Ceramic Shield', 'IP68 Water Resistance'],
-    variants: [
-      { name: 'Color', options: ['Midnight', 'Starlight', 'Blue', 'Pink', 'Green'] }
-    ]
+    specs: ['128GB Storage', 'A15 Bionic', 'Ceramic Shield'],
+  },
+  {
+    id: 'BB-102',
+    name: 'Apple Pencil (2nd Generation) for iPad Pro...',
+    category: 'Accessories',
+    price: 1299,
+    rating: 4.5,
+    reviewCount: 678,
+    description: 'Precision performance for iPad Pro, iPad Air, and iPad mini.',
+    image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&q=80&w=800',
+    stock: 50,
+  },
+  {
+    id: 'BB-103',
+    name: 'AirPods Pro (2nd Generation) with MagSafe...',
+    category: 'Accessories',
+    price: 2499,
+    discount: 11,
+    rating: 4.3,
+    reviewCount: 589,
+    description: 'Active Noise Cancellation and Adaptive Transparency.',
+    image: 'https://images.unsplash.com/photo-1603351154351-5e2d0600bb77?auto=format&fit=crop&q=80&w=800',
+    stock: 30,
+  },
+  {
+    id: 'BB-104',
+    name: 'PlayStation 5 Console with DualSense Wireless...',
+    category: 'Gaming',
+    price: 5499,
+    new: true,
+    rating: 4.8,
+    reviewCount: 512,
+    description: 'Experience lightning-fast loading and deeper immersion.',
+    image: 'https://images.unsplash.com/photo-1606813907291-d86ebb9474ad?auto=format&fit=crop&q=80&w=800',
+    stock: 12,
+  },
+  {
+    id: 'BB-105',
+    name: 'MacBook Air 15" M2 Chip 8GB RAM 256...',
+    category: 'Laptop',
+    price: 12999,
+    rating: 4.7,
+    reviewCount: 421,
+    description: 'The worlds best 15-inch laptop.',
+    image: 'https://images.unsplash.com/photo-1517336714467-d13a2323485d?auto=format&fit=crop&q=80&w=800',
+    stock: 8,
+  },
+  {
+    id: 'BB-106',
+    name: 'Nintendo Switch OLED',
+    category: 'Gaming',
+    price: 4500,
+    new: true,
+    discount: 11,
+    rating: 4.9,
+    reviewCount: 942,
+    description: 'Vivid colors and crisp contrast on a larger OLED screen.',
+    image: 'https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?auto=format&fit=crop&q=80&w=1200',
+    stock: 15,
   }
 ];

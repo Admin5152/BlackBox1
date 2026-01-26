@@ -1,7 +1,8 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// Always initialize with process.env.API_KEY directly as a named parameter
+const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const getDiagnosticHelp = async (device: string, issue: string, base64Image?: string): Promise<string> => {
   try {
@@ -24,6 +25,7 @@ export const getDiagnosticHelp = async (device: string, issue: string, base64Ima
         systemInstruction: "You are Pulse AI. Provide extremely concise, professional technical diagnoses for Black Box engineers. DO NOT use conversational filler. GO STRAIGHT TO THE POINT. Identify the likely failing component and estimated repair complexity in 2 sentences max.",
       }
     });
+    // Use .text property to extract output
     return response.text || "Diagnostic complete. Hardware failure suspected.";
   } catch (error) {
     console.error("AI Error:", error);
@@ -34,14 +36,17 @@ export const getDiagnosticHelp = async (device: string, issue: string, base64Ima
 export const chatWithGemini = async (history: {role: string, parts: {text: string}[]}[], prompt: string): Promise<string> => {
   try {
     const ai = getAI();
+    // Pass existing history to the chat session for contextual awareness
     const chat = ai.chats.create({
       model: 'gemini-3-pro-preview',
+      history: history as any,
       config: {
         systemInstruction: "You are 'Pulse', the official AI assistant for Black Box, Kumasi. You are elite, minimalist, and direct. Answer questions about tech sales and repairs briefly. No small talk. Keep responses under 50 words.",
       },
     });
     
     const response = await chat.sendMessage({ message: prompt });
+    // Use .text property to extract output
     return response.text || "I'm Pulse. How can I assist with your hardware?";
   } catch (error) {
     console.error("Chat Error:", error);

@@ -1,5 +1,5 @@
 
-export type Category = 'Phones' | 'Laptops' | 'Accessories' | 'Consoles' | 'Audio';
+export type Category = 'iPhone' | 'Laptop' | 'Accessories' | 'Gaming' | 'Audio';
 
 export interface ProductVariant {
   name: string; // e.g., "Color", "Storage"
@@ -15,6 +15,10 @@ export interface Product {
   image: string;
   stock: number;
   featured?: boolean;
+  new?: boolean;
+  discount?: number;
+  rating?: number;
+  reviewCount?: number;
   specs?: string[];
   variants?: ProductVariant[];
 }
@@ -26,6 +30,7 @@ export interface User {
   phone?: string;
   role: 'user' | 'admin';
   address?: string;
+  wishlist?: string[]; // Array of product IDs
 }
 
 export interface CartItem extends Product {
