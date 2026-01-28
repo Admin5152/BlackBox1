@@ -1,12 +1,12 @@
 
 import React from 'react';
-import { Heart, Star, ShoppingCart, Eye, Scale } from 'lucide-react';
+import { Heart, Star, ShoppingCart, Eye, Scale, ShoppingBag } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
 import { Product } from '../types';
 import { formatCurrency } from '../lib/utils';
 
 interface ProductCardProps {
   product: Product;
-  onClick: () => void;
   onQuickView: (product: Product) => void;
   isWishlisted: boolean;
   onToggleWishlist: (productId: string) => void;
@@ -16,111 +16,90 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ 
-  product, 
-  onClick, 
-  onQuickView, 
-  isWishlisted, 
-  onToggleWishlist,
-  onAddToCart,
-  isCompared,
-  onToggleCompare
+  product, onQuickView, isWishlisted, onToggleWishlist, onAddToCart, isCompared, onToggleCompare
 }) => {
-  const oldPrice = product.discount ? product.price / (1 - product.discount / 100) : null;
-
   return (
     <div 
-      className="group bg-[#121212] border border-white/5 rounded-3xl overflow-hidden hover:border-white/20 transition-all duration-500 flex flex-col h-full cursor-pointer relative"
-      onClick={onClick}
+      className={`group bg-[#0a0a0a] border rounded-[2.5rem] overflow-hidden transition-all duration-700 flex flex-col h-full cursor-pointer relative ${isCompared ? 'border-[#D4AF37]' : 'border-white/5 hover:border-[#D4AF37]/30 shadow-2xl'}`}
     >
-      {/* Badges */}
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+      {/* Top Badges */}
+      <div className="absolute top-6 left-6 z-20 flex flex-col gap-3">
         {product.new && (
-          <span className="bg-white text-black text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest">New</span>
+          <span className="bg-white text-black text-[9px] font-black px-3 py-1.5 rounded uppercase tracking-widest shadow-lg">NEW</span>
         )}
         {product.discount && (
-          <span className="bg-[#EF4444] text-white text-[9px] font-black px-2.5 py-1 rounded-md uppercase tracking-widest">-{product.discount}%</span>
+          <span className="bg-[#D4AF37] text-black text-[9px] font-black px-3 py-1.5 rounded uppercase tracking-widest shadow-lg italic">-{product.discount}%</span>
         )}
       </div>
 
-      <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
+      {/* Action Buttons (Top Right) */}
+      <div className="absolute top-6 right-6 z-20 flex flex-col gap-3">
         <button 
-          className={`transition-all p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/5 hover:scale-110 active:scale-95 ${isWishlisted ? 'text-white' : 'text-white/40 hover:text-white'}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleWishlist(product.id);
-          }}
+          className={`transition-all p-3 backdrop-blur-xl rounded-full border border-white/10 hover:bg-[#D4AF37] hover:text-black ${isWishlisted ? 'text-[#D4AF37]' : 'text-white/40'}`}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleWishlist(product.id); }}
         >
-          <Heart size={16} className={isWishlisted ? 'fill-white' : ''} />
+          <Heart size={16} className={isWishlisted ? 'fill-[#D4AF37]' : ''} />
         </button>
         <button 
-          className={`transition-all p-2 bg-black/40 backdrop-blur-md rounded-full border border-white/5 hover:scale-110 active:scale-95 ${isCompared ? 'text-[#D4AF37] border-[#D4AF37]/40' : 'text-white/40 hover:text-white'}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleCompare(product.id);
-          }}
-          title="Compare Products"
+          className={`transition-all p-3 backdrop-blur-xl rounded-full border border-white/10 hover:bg-[#D4AF37] hover:text-black ${isCompared ? 'text-[#D4AF37]' : 'text-white/40'}`}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleCompare(product.id); }}
         >
           <Scale size={16} />
         </button>
       </div>
 
-      {/* Image Area */}
-      <div className="aspect-[4/5] relative overflow-hidden bg-[#0a0a0a] flex items-center justify-center p-6">
-        <img 
-          src={product.image} 
-          alt={product.name}
-          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-        />
-        
-        {/* Quick View Overlay (Appears on Hover) */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-8">
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              onQuickView(product);
-            }}
-            className="w-full py-4 bg-white text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-xl flex items-center justify-center gap-2 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-2xl"
-          >
-            <Eye size={14} /> Quick View
-          </button>
+      <Link to="/product/$productId" params={{ productId: product.id } as any} className="flex-1 flex flex-col">
+        {/* Image & Quick View Area */}
+        <div className="aspect-square relative overflow-hidden bg-black flex items-center justify-center p-12">
+          <img 
+            src={product.image} 
+            alt={product.name}
+            className="w-full h-full object-contain transition-transform duration-[1s] group-hover:scale-105"
+          />
+          {/* Quick View Overlay */}
+          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center p-12">
+            <button 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onQuickView(product); }}
+              className="w-full py-5 bg-white text-black text-[10px] font-black uppercase tracking-[0.4em] rounded-xl transform translate-y-8 group-hover:translate-y-0 transition-all duration-500 shadow-2xl flex items-center justify-center gap-3"
+            >
+              <Eye size={16} /> QUICK VIEW
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="p-6 flex-1 flex flex-col justify-between">
-        <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 italic">{product.category}</p>
-          <h3 className="text-[13px] font-bold text-white transition-colors leading-snug line-clamp-2 uppercase italic">{product.name}</h3>
-          
-          <div className="flex items-center gap-1.5 pt-1.5">
-            <div className="flex items-center gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={10} className={i < Math.floor(product.rating || 4) ? 'fill-white text-white' : 'text-white/10'} />
-              ))}
+        {/* Info Area */}
+        <div className="p-8 flex-1 flex flex-col justify-between space-y-6">
+          <div className="space-y-1.5">
+            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30 italic">{product.category}</p>
+            <h3 className="text-[13px] font-black text-white leading-tight uppercase italic line-clamp-2 tracking-wide group-hover:text-[#D4AF37] transition-colors">{product.name}</h3>
+            <div className="flex items-center gap-2 pt-1">
+              <div className="flex gap-0.5">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} size={10} className={i < Math.floor(product.rating || 4) ? 'fill-[#D4AF37] text-[#D4AF37]' : 'text-white/10'} />
+                ))}
+              </div>
+              <span className="text-[9px] text-white/20 font-black italic">({product.reviewCount || 0})</span>
             </div>
-            <span className="text-[10px] text-white/30 font-bold italic">({product.reviewCount || 0})</span>
-          </div>
-        </div>
-
-        <div className="space-y-4 pt-6">
-          <div className="flex items-baseline gap-2">
-            <span className="text-lg font-black text-white tracking-tight">{formatCurrency(product.price)}</span>
-            {oldPrice && (
-              <span className="text-[10px] text-white/20 line-through font-medium">{formatCurrency(oldPrice)}</span>
-            )}
           </div>
 
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToCart(product);
-            }}
-            className="w-full py-4 bg-white hover:bg-white/90 text-black rounded-xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
-          >
-            <ShoppingCart size={14} /> Add to Cart
-          </button>
+          <div className="space-y-5">
+            <div className="flex items-baseline gap-3">
+              <span className="text-xl font-black text-white tracking-tighter">{formatCurrency(product.price)}</span>
+              {product.discount && (
+                <span className="text-[10px] text-white/20 line-through font-bold">
+                  {formatCurrency(product.price * (1 + product.discount/100))}
+                </span>
+              )}
+            </div>
+            <button 
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onAddToCart(product); }}
+              className="w-full py-5 border-2 border-white/5 hover:border-[#D4AF37] group-hover:bg-[#D4AF37]/5 rounded-xl text-[10px] font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center gap-3"
+            >
+              <ShoppingCart size={16} /> ADD TO CART
+            </button>
+          </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

@@ -1,37 +1,35 @@
 
 import React from 'react';
 import { MapPin, Phone } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
 
-interface FooterProps {
-  navigateTo: (view: string) => void;
-}
-
-export const Footer: React.FC<FooterProps> = ({ navigateTo }) => {
+export const Footer: React.FC = () => {
   return (
-    <footer className="py-24 px-6 border-t bg-[#050505] border-white/5 text-white">
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-16">
+    <footer className="py-24 px-8 border-t bg-black border-white/5 text-white">
+      <div className="max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-4 gap-16 md:gap-24">
         <div className="space-y-8">
            <h2 className="text-3xl font-black italic tracking-tighter uppercase">BLACKBOX</h2>
-           <p className="text-xs leading-relaxed max-w-[240px] font-light uppercase tracking-widest text-white/30">
-             The elite Ghanaian destination for hardware sales & specialized diagnostics. Precision is our baseline.
+           <p className="text-[10px] leading-relaxed max-w-[240px] font-black uppercase tracking-[0.3em] text-white/20 italic">
+             Elite hardware repository & specialized diagnostics. Precision establishes the baseline.
            </p>
         </div>
         <div className="space-y-6">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Services</h4>
-          <ul className="space-y-3 text-xs font-medium uppercase tracking-widest text-white/50">
-            <li className="hover:opacity-100 cursor-pointer transition-opacity" onClick={() => navigateTo('repair')}>Lab Diagnostic</li>
-            <li className="hover:opacity-100 cursor-pointer transition-opacity" onClick={() => navigateTo('store')}>Hardware Shop</li>
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/10">Directory</h4>
+          <ul className="space-y-4 text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
+            <li><Link to="/repair" className="hover:text-white transition-colors">Lab Diagnostics</Link></li>
+            <li><Link to="/store" className="hover:text-white transition-colors">Hardware Bench</Link></li>
+            <li><Link to="/profile" className="hover:text-white transition-colors">Identity Log</Link></li>
           </ul>
         </div>
         <div className="space-y-6">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">Location</h4>
-          <ul className="space-y-3 text-xs font-medium uppercase tracking-widest text-white/50">
-            <li className="flex items-center gap-3"><MapPin size={16}/> KNUST, Kumasi, GH</li>
-            <li className="flex items-center gap-3"><Phone size={16}/> +233 50 123 4567</li>
+          <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/10">Branch</h4>
+          <ul className="space-y-4 text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
+            <li className="flex items-center gap-3 italic"><MapPin size={14}/> KNUST, Kumasi, GH</li>
+            <li className="flex items-center gap-3 italic"><Phone size={14}/> +233 50 123 4567</li>
           </ul>
         </div>
-        <div className="space-y-6 text-right md:text-left">
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/10">© 2024 BLACKBOX GHANA. EST. KUMASI.</p>
+        <div className="flex items-end justify-start md:justify-end">
+          <p className="text-[9px] font-black uppercase tracking-[0.4em] text-white/10 italic">© 2025 BLACKBOX. EST. KUMASI.</p>
         </div>
       </div>
     </footer>

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { User } from '../types';
-import { Mail, Lock, User as UserIcon, ArrowRight, Shield, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, User as UserIcon, ArrowRight, Shield, Eye, EyeOff } from 'lucide-react';
 
 interface AuthProps {
   setUser: (user: User) => void;
@@ -10,11 +10,11 @@ interface AuthProps {
 
 export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,7 +23,6 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Mock authentication logic
     const mockUser: User = {
       id: Math.random().toString(36).substr(2, 9),
       name: formData.name || 'User',
@@ -35,122 +34,148 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   };
 
   return (
-    <div className="view-transition min-h-[85vh] flex items-center justify-center px-6 py-12 bg-black overflow-hidden relative">
-      {/* Background decoration */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 blur-[120px] rounded-full pointer-events-none"></div>
+    <div className="view-transition min-h-screen flex flex-col lg:flex-row bg-white overflow-hidden">
+      
+      {/* LEFT SECTION: Visual Brand (Dark) */}
+      <div className="w-full lg:w-[45%] bg-black p-12 lg:p-24 flex flex-col justify-between relative overflow-hidden">
+        {/* Decorative Gradient Overlay */}
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D4AF37]/5 blur-[120px] rounded-full -mr-64 -mt-64"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#D4AF37]/5 blur-[120px] rounded-full -ml-64 -mb-64"></div>
 
-      <div className="max-w-[440px] w-full bg-[#0a0a0a] border border-white/10 p-8 md:p-14 rounded-[3rem] text-center space-y-10 shadow-2xl relative z-10 animate-view-in">
-        
-        {/* Header from Screenshot */}
-        <div className="space-y-2">
-          <h2 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase leading-none">IDENTITY</h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 italic">
-            {mode === 'login' ? 'Authentication Required' : 'Establish New Identity'}
+        <div className="relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-[#D4AF37] rounded flex items-center justify-center font-black text-black italic text-sm">B</div>
+            <span className="text-sm font-black tracking-widest text-white uppercase italic">BLACK BOX.</span>
+          </div>
+        </div>
+
+        <div className="relative z-10 space-y-8 py-20 lg:py-0">
+          <h1 className="text-6xl lg:text-[7rem] font-black italic tracking-tighter leading-[0.85] text-white uppercase">
+            Login <br />
+            <span className="text-[#D4AF37]">Page</span>
+          </h1>
+          <p className="text-lg lg:text-xl text-white/40 font-light italic leading-relaxed max-w-sm">
+            Start your journey now with us and access the elite hardware repository.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 text-left">
-          {mode === 'signup' && (
-            <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Full Name</label>
-              <div className="relative group">
-                <UserIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white transition-colors" size={18} />
-                <input 
-                  type="text"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold outline-none focus:border-white transition-all placeholder:text-white/10"
-                  placeholder="Enter your name"
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-white/30 ml-2">Email Address</label>
-            <div className="relative group">
-              <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white transition-colors" size={18} />
-              <input 
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold outline-none focus:border-white transition-all placeholder:text-white/10"
-                placeholder="identity@blackbox.gh"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="flex justify-between items-center ml-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-white/30">Password</label>
-              {mode === 'login' && (
-                <button type="button" className="text-[9px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-colors">Forgot?</button>
-              )}
-            </div>
-            <div className="relative group">
-              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-white transition-colors" size={18} />
-              <input 
-                type="password"
-                name="password"
-                required
-                value={formData.password}
-                onChange={handleInputChange}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl pl-14 pr-6 py-4 text-sm font-bold outline-none focus:border-white transition-all placeholder:text-white/10"
-                placeholder="••••••••"
-              />
-            </div>
-          </div>
-
-          <div className="pt-4">
-            <button 
-              type="submit" 
-              className="w-full py-5 bg-white text-black font-black rounded-2xl text-xs uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-2xl flex items-center justify-center gap-3"
-            >
-              {mode === 'login' ? 'SIGN IN TO BLACK BOX' : 'ESTABLISH IDENTITY'}
-              <ArrowRight size={18} />
-            </button>
-          </div>
-        </form>
-
-        <div className="space-y-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/5"></div></div>
-            <div className="relative flex justify-center"><span className="px-4 bg-[#0a0a0a] text-[9px] font-black text-white/20 uppercase tracking-[0.3em]">Hardware Verification</span></div>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <button 
-              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
-              className="text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-all italic flex items-center justify-center gap-2"
-            >
-              {mode === 'login' ? (
-                <>New to the Repository? <span className="text-white border-b border-white/20 pb-0.5">Create Account</span></>
-              ) : (
-                <>Already verified? <span className="text-white border-b border-white/20 pb-0.5">Sign In</span></>
-              )}
-            </button>
-            <p className="text-[9px] text-white/10 uppercase font-black tracking-[0.4em]">PREMIUM ACCESS ONLY</p>
-          </div>
-        </div>
-
-        {/* Security badge at bottom */}
-        <div className="pt-6 border-t border-white/5 flex items-center justify-center gap-3 opacity-20">
-          <Shield size={14} />
-          <span className="text-[8px] font-black uppercase tracking-widest">Encrypted Identity Link // Black Box Sec-v3</span>
+        <div className="relative z-10">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 italic">
+            AUTHORIZED TERMINAL // EST. KUMASI
+          </p>
         </div>
       </div>
 
-      {/* Footer navigation shortcut */}
-      <button 
-        onClick={() => navigateTo('home')}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-white transition-all italic"
-      >
-        <ArrowLeft size={14} /> Back to Homepage
-      </button>
+      {/* RIGHT SECTION: Interaction (Light) */}
+      <div className="w-full lg:w-[55%] bg-[#F9F9F9] flex items-center justify-center p-8 lg:p-24">
+        
+        <div className="w-full max-w-[480px] bg-white rounded-[2.5rem] p-8 md:p-14 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-black/5 animate-in fade-in slide-in-from-right-10 duration-700">
+          
+          <div className="mb-10 text-center lg:text-left">
+            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-black">
+              {mode === 'login' ? 'Login to your account' : 'Create an account'}
+            </h2>
+            <p className="text-[11px] font-black uppercase tracking-widest text-black/30 mt-2 italic">
+              {mode === 'login' ? 'Welcome back to the repository' : 'Establish your new tech identity'}
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {mode === 'signup' && (
+              <div className="space-y-2">
+                <label className="text-[10px] font-black uppercase tracking-widest text-black/40 ml-1">Full Name</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-black/10" size={18} />
+                  <input 
+                    type="text"
+                    name="name"
+                    required
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    className="w-full bg-[#F5F5F5] border border-transparent rounded-2xl pl-12 pr-6 py-4 text-sm font-bold text-black outline-none focus:border-[#D4AF37]/50 focus:bg-white transition-all placeholder:text-black/10"
+                    placeholder="John Doe"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-black/40 ml-1">Email</label>
+              <div className="relative">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-black/10" size={18} />
+                <input 
+                  type="email"
+                  name="email"
+                  required
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#F5F5F5] border border-transparent rounded-2xl pl-12 pr-6 py-4 text-sm font-bold text-black outline-none focus:border-[#D4AF37]/50 focus:bg-white transition-all placeholder:text-black/10"
+                  placeholder="identity@blackbox.gh"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex justify-between items-center px-1">
+                <label className="text-[10px] font-black uppercase tracking-widest text-black/40">Password</label>
+                {mode === 'login' && (
+                  <button type="button" className="text-[9px] font-black uppercase tracking-widest text-[#D4AF37] hover:underline">Forgot ?</button>
+                )}
+              </div>
+              <div className="relative">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-black/10" size={18} />
+                <input 
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  required
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  className="w-full bg-[#F5F5F5] border border-transparent rounded-2xl pl-12 pr-12 py-4 text-sm font-bold text-black outline-none focus:border-[#D4AF37]/50 focus:bg-white transition-all placeholder:text-black/10"
+                  placeholder="••••••••"
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-black/20 hover:text-black transition-colors"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            <button 
+              type="submit" 
+              className="w-full py-5 bg-[#D4AF37] text-black font-black rounded-2xl text-xs uppercase tracking-[0.2em] shadow-xl hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 mt-4"
+            >
+              {mode === 'login' ? 'Login now' : 'Create account'}
+            </button>
+          </form>
+
+          <div className="mt-8 text-center space-y-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-black/5"></div></div>
+              <div className="relative flex justify-center"><span className="px-4 bg-white text-[9px] font-black text-black/10 uppercase tracking-[0.3em]">Hardware Verification</span></div>
+            </div>
+
+            <button 
+              onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+              className="text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-black transition-all italic"
+            >
+              {mode === 'login' ? (
+                <>Don't have an account? <span className="text-[#D4AF37] ml-1">Sign up</span></>
+              ) : (
+                <>Already have an account? <span className="text-[#D4AF37] ml-1">Log in</span></>
+              )}
+            </button>
+          </div>
+
+          <div className="mt-10 pt-6 border-t border-black/5 flex items-center justify-center gap-3 opacity-10">
+            <Shield size={14} className="text-black" />
+            <span className="text-[8px] font-black uppercase tracking-widest">Encrypted Identity Link // Sec-v4</span>
+          </div>
+        </div>
+
+      </div>
     </div>
   );
 };

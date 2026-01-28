@@ -1,120 +1,70 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Search, Menu, User as UserIcon, Wrench, X, ShoppingCart, Home, ShoppingBag } from 'lucide-react';
+import { Link, useLocation } from '@tanstack/react-router';
 import { User, CartItem } from '../types';
 
 interface NavbarProps {
-  view: string;
   user: User | null;
   cart: CartItem[];
   searchQuery: string;
   setSearchQuery: (q: string) => void;
-  navigateTo: (view: string) => void;
-  setIsCartOpen: (open: boolean) => void;
   setIsMobileMenuOpen: (open: boolean) => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ 
-  view, user, cart, searchQuery, setSearchQuery, navigateTo, setIsCartOpen, setIsMobileMenuOpen 
+  user, cart, searchQuery, setSearchQuery, setIsMobileMenuOpen 
 }) => {
-  const [isSearchActive, setIsSearchActive] = useState(false);
+  const location = useLocation();
   const cartCount = cart.reduce((a, c) => a + c.quantity, 0);
 
-  const navItemClass = (isActive: boolean) => `
-    flex items-center gap-2 px-6 py-3 rounded-2xl transition-all duration-300
-    ${isActive ? 'bg-[#D4AF37] text-black font-black' : 'text-white/60 hover:text-white hover:bg-white/5'}
+  const navItemClass = (path: string) => `
+    flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest
+    ${location.pathname === path ? 'bg-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]' : 'text-white/40 hover:text-white hover:bg-white/5'}
   `;
 
   return (
-    <nav className="sticky top-0 z-[60] glass h-24 flex items-center transition-all bg-black/95 border-b border-white/5">
+    <nav className="sticky top-0 z-[60] h-24 flex items-center bg-black/95 border-b border-white/5 backdrop-blur-3xl">
       <div className="max-w-[1440px] mx-auto px-8 w-full flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex-1 flex items-center">
-          <div 
-            onClick={() => navigateTo('home')}
-            className={`flex items-center gap-3 cursor-pointer group transition-opacity ${isSearchActive ? 'opacity-0 pointer-events-none md:opacity-100 md:pointer-events-auto' : 'opacity-100'}`}
-          >
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center font-black text-black italic text-xl">B</div>
-            <div>
-              <h1 className="text-lg font-black tracking-tighter leading-none group-hover:text-white transition-colors">BLACKBOX</h1>
-              <p className="text-[10px] font-bold text-white/40 tracking-[0.2em] uppercase">Premium Tech</p>
-            </div>
+        <Link to="/" className="flex items-center gap-3 group transition-opacity">
+          <div className="w-10 h-10 bg-[#D4AF37] rounded-lg flex items-center justify-center font-black text-black italic text-xl">B</div>
+          <div className="hidden sm:block">
+            <h1 className="text-lg font-black tracking-tighter leading-none">BLACKBOX</h1>
+            <p className="text-[9px] font-black text-[#D4AF37]/50 tracking-[0.3em] uppercase">PREMIUM TECH</p>
           </div>
+        </Link>
+
+        <div className="hidden lg:flex items-center gap-2">
+          <Link to="/" className={navItemClass('/')}><Home size={16} /> Home</Link>
+          <Link to="/store" className={navItemClass('/store')}><ShoppingBag size={16} /> Products</Link>
+          <Link to="/repair" className={navItemClass('/repair')}><Wrench size={16} /> Repairs</Link>
+          <Link to="/cart" className={navItemClass('/cart')}>
+            <ShoppingCart size={16} /> Bag
+            {cartCount > 0 && <span className="ml-2 px-2 py-0.5 bg-[#D4AF37] text-black text-[9px] rounded-full">{cartCount}</span>}
+          </Link>
+          
+          <Link 
+            to={user ? '/profile' : '/auth'} 
+            className={`
+              flex items-center gap-2 px-8 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ml-4
+              ${user ? 'bg-white/5 text-white border border-white/10 hover:border-[#D4AF37]/50' : 'bg-[#D4AF37] text-black shadow-lg hover:brightness-110'}
+            `}
+          >
+            <UserIcon size={16} /> {user ? 'Account' : 'Sign In'}
+          </Link>
         </div>
 
-        {/* Center Nav */}
-        <div className={`hidden lg:flex items-center gap-4 text-[13px] font-bold tracking-tight transition-opacity ${isSearchActive ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-          <button onClick={() => navigateTo('home')} className={navItemClass(view === 'home')}>
-            <Home size={20} strokeWidth={2.5} /> Home
-          </button>
-          
-          <button onClick={() => navigateTo('store')} className={navItemClass(view === 'store')}>
-            <ShoppingBag size={20} strokeWidth={2.5} /> Products
-          </button>
-          
-          <button onClick={() => navigateTo('repair')} className={navItemClass(view === 'repair')}>
-            <Wrench size={20} strokeWidth={2.5} /> Repairs
-          </button>
-          
-          <button 
-            onClick={() => navigateTo('cart')} 
-            className={`relative ${navItemClass(view === 'cart')}`}
-          >
-            <ShoppingCart size={20} strokeWidth={2.5} /> Cart
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 w-6 h-6 bg-[#EF4444] text-white rounded-full flex items-center justify-center text-[10px] font-black border-2 border-black animate-in zoom-in duration-300">
-                {cartCount}
-              </span>
-            )}
-          </button>
-
-          <button 
-            onClick={() => (user ? navigateTo('profile') : navigateTo('auth'))} 
-            className={navItemClass(view === 'profile' || view === 'auth')}
-          >
-            <UserIcon size={20} strokeWidth={2.5} /> Account
-          </button>
-        </div>
-
-        {/* Search Overlay */}
-        <div className={`absolute inset-0 flex items-center justify-center px-8 transition-all duration-300 ${isSearchActive ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
-          <div className="w-full max-w-2xl relative">
-            <Search size={20} className="absolute left-6 top-1/2 -translate-y-1/2 text-white/40" />
+        <div className="flex items-center gap-4">
+          <div className="relative hidden md:block">
+            <Search size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20" />
             <input 
-              autoFocus={isSearchActive}
-              placeholder="Search for Elite Hardware..." 
+              placeholder="LOG SEARCH..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-full pl-16 pr-16 py-5 text-base font-medium outline-none focus:border-[#D4AF37] transition-all"
+              className="bg-white/5 border border-white/10 rounded-full pl-12 pr-6 py-3 text-[10px] font-black uppercase tracking-widest outline-none focus:border-[#D4AF37]/40 transition-all w-48 focus:w-64"
             />
-            <button 
-              onClick={() => { setIsSearchActive(false); setSearchQuery(''); }}
-              className="absolute right-6 top-1/2 -translate-y-1/2 text-white/40 hover:text-white"
-            >
-              <X size={20} />
-            </button>
           </div>
-        </div>
-
-        {/* Right Side */}
-        <div className="flex-1 flex items-center justify-end gap-4">
-          <button 
-            onClick={() => setIsSearchActive(true)}
-            className={`p-3 text-white/40 hover:text-white hover:bg-white/5 rounded-full transition-all ${isSearchActive ? 'scale-0' : 'scale-100'}`}
-          >
-            <Search size={22} />
-          </button>
-
-          {!user && (
-            <button 
-              onClick={() => navigateTo('auth')} 
-              className={`px-8 py-3.5 bg-[#D4AF37] text-black hover:brightness-110 transition-all rounded-full text-[12px] font-black uppercase tracking-widest ${isSearchActive ? 'hidden' : 'flex'}`}
-            >
-              Sign In
-            </button>
-          )}
-          
-          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-3 text-white/60 hover:text-white hover:bg-white/5 rounded-full">
+          <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-3 text-white/40 hover:text-[#D4AF37] hover:bg-white/5 rounded-full transition-colors">
             <Menu size={24}/>
           </button>
         </div>
