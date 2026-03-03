@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { getOrders, getUsers } from '../lib/api';
 import type { Order } from '../types';
 import type { User } from '../interface/interface';
-import { 
-  BarChart3, 
-  Users, 
-  ShoppingCart, 
-  DollarSign, 
-  Package, 
+import {
+  BarChart3,
+  Users,
+  ShoppingCart,
+  DollarSign,
+  Package,
   TrendingUp,
   Calendar,
   Mail,
@@ -60,7 +60,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
   const avgOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
   // Filter orders based on search
-  const filteredOrders = orders.filter(order => 
+  const filteredOrders = orders.filter(order =>
     order.userName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -127,7 +127,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
       <div className="bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/5 rounded-3xl p-8 shadow-2xl">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Recent Orders</h2>
-          <button 
+          <button
             onClick={() => setActiveSection('orders')}
             className="text-[10px] font-black uppercase tracking-widest text-[#B38B21] hover:text-[#D4AF37] transition-colors"
           >
@@ -149,12 +149,11 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                 </div>
                 <div className="text-right">
                   <p className="text-xs font-black text-white/60">{order.date.toLocaleDateString()}</p>
-                  <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
-                    order.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
+                  <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${order.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
                     order.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
-                    order.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
-                    'bg-yellow-500/20 text-yellow-400'
-                  }`}>
+                      order.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
+                        'bg-yellow-500/20 text-yellow-400'
+                    }`}>
                     {order.status}
                   </span>
                 </div>
@@ -226,17 +225,16 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                     <span className="text-xs text-white/60">{order.date.toLocaleDateString()}</span>
                   </td>
                   <td className="py-4 px-4">
-                    <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
-                      order.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
+                    <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${order.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
                       order.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
-                      order.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
-                      'bg-yellow-500/20 text-yellow-400'
-                    }`}>
+                        order.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
+                          'bg-yellow-500/20 text-yellow-400'
+                      }`}>
                       {order.status}
                     </span>
                   </td>
                   <td className="py-4 px-4">
-                    <button 
+                    <button
                       onClick={() => setSelectedOrder(order)}
                       className="text-[#B38B21] hover:text-[#D4AF37] transition-colors"
                     >
@@ -273,7 +271,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
           {filteredCustomers.map((customer) => {
             const customerOrders = orders.filter(order => order.userId === customer.id);
             const customerSpent = customerOrders.reduce((sum, order) => sum + order.total + order.shipping, 0);
-            
+
             return (
               <div key={customer.id} className="bg-black/30 border border-white/5 rounded-2xl p-6 hover:border-[#B38B21]/30 transition-all">
                 <div className="flex items-center gap-4 mb-4">
@@ -304,7 +302,24 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
   );
 
   return (
-    <div className="min-h-screen bg-black flex">
+    <div className="min-h-screen bg-black flex flex-col lg:flex-row">
+      {/* Mobile Top Header (Visible only on mobile) */}
+      <div className="lg:hidden sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex flex-col lg:flex-row gap-4 items-center">
+            <div className="flex-1 max-w-2xl w-full flex items-center justify-end">
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-white/10 bg-[#0d0d0b] text-white"
+              >
+                <Menu size={16} />
+                Menu
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Mobile backdrop */}
       {isSidebarOpen && (
         <div
@@ -315,13 +330,13 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
       {/* Sidebar */}
       <div
         className={`
-          fixed lg:static inset-y-0 left-0 z-[80]
+          fixed lg:sticky top-0 h-screen inset-y-0 left-0 z-[80]
           ${isSidebarOpen ? 'translate-x-0 w-72 sm:w-80 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'}
           bg-gradient-to-b from-[#0a0a0a] to-[#050505] border-r border-white/5
-          transition-all duration-300 flex flex-col
+          transition-transform duration-300 flex flex-col shrink-0
         `}
       >
-        <div className="p-6 border-b border-white/5">
+        <div className="p-6 border-b border-white/5 hidden lg:block">
           <div className="flex items-center justify-between">
             <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
               {/* <div className="w-8 h-8 bg-[#B38B21] rounded flex items-center justify-center">
@@ -356,11 +371,10 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
             <button
               key={item.id}
               onClick={() => { setActiveSection(item.id as any); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${
-                activeSection === item.id
-                  ? 'bg-[#B38B21] text-black'
-                  : 'text-white/40 hover:text-white hover:bg-white/5'
-              }`}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${activeSection === item.id
+                ? 'bg-[#B38B21] text-black'
+                : 'text-white/40 hover:text-white hover:bg-white/5'
+                }`}
             >
               <item.icon size={20} />
               {isSidebarOpen && (
@@ -403,11 +417,11 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
               </div>
               <div className="w-10 h-10 bg-gradient-to-br from-[#000000] to-[#000000] rounded-2xl flex items-center justify-center">
                 <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
-                  <path d="M25 40V28C25 26.3431 26.3431 25 28 25H40" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                  <path d="M60 25H72C73.6569 25 75 26.3431 75 28V40" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                  <path d="M75 60V72C75 73.6569 73.6569 75 72 75H60" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                  <path d="M40 75H28C26.3431 75 25 73.6569 25 72V60" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                  <rect x="38" y="44" width="24" height="12" rx="6" fill="currentColor"/>
+                  <path d="M25 40V28C25 26.3431 26.3431 25 28 25H40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                  <path d="M60 25H72C73.6569 25 75 26.3431 75 28V40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                  <path d="M75 60V72C75 73.6569 73.6569 75 72 75H60" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                  <path d="M40 75H28C26.3431 75 25 73.6569 25 72V60" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                  <rect x="38" y="44" width="24" height="12" rx="6" fill="currentColor" />
                 </svg>
               </div>
             </div>
@@ -439,17 +453,16 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
             >
               <X size={20} className="text-white" />
             </button>
-            
+
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-black text-white mb-2">Order #{selectedOrder.id.slice(-6)}</h3>
                 <div className="flex items-center gap-4">
-                  <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${
-                    selectedOrder.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
+                  <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${selectedOrder.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
                     selectedOrder.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
-                    selectedOrder.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
-                    'bg-yellow-500/20 text-yellow-400'
-                  }`}>
+                      selectedOrder.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
+                        'bg-yellow-500/20 text-yellow-400'
+                    }`}>
                     {selectedOrder.status}
                   </span>
                   <span className="text-xs text-white/40">{selectedOrder.date.toLocaleDateString()}</span>

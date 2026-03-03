@@ -10,7 +10,7 @@ import {
   useLocation,
   createMemoryHistory
 } from '@tanstack/react-router';
-import { X, CheckCircle2, Activity, Scale, RefreshCcw, Home as HomeIcon, ShoppingBag, Wrench, ShoppingCart, User as UserIcon, LogOut, ChevronRight, Settings } from 'lucide-react';
+import { X, CheckCircle2, Activity, Scale, RefreshCcw, Home as HomeIcon, ShoppingBag, Wrench, ShoppingCart, User as UserIcon, LogOut, ChevronRight, Settings, LayoutDashboard } from 'lucide-react';
 import { Product, User, CartItem, Category, RepairRequest, Order } from './types';
 import { getProducts, createOrder } from './lib/api';
 import { INITIAL_PRODUCTS } from './constants';
@@ -186,7 +186,7 @@ const adminRoute = createRoute({
   component: () => {
     const context = useAppContext();
     // Check if user is admin
-    if (context.user?.email === 'BlackBox@gmail.com' && context.user?.role === 'admin') {
+    if (context.user?.role === 'admin') {
       return <Admin setUser={context.setUser} navigateTo={context.navigateTo} />;
     }
     // Redirect non-admin users to home
@@ -502,6 +502,7 @@ function RootComponent() {
                   { id: 'store', label: 'Products', icon: ShoppingBag, path: '/store' },
                   { id: 'trades', label: 'Trades', icon: RefreshCcw, path: '/trades' },
                   { id: 'repair', label: 'Repairs', icon: Wrench, path: '/repair' },
+                  ...(user?.role === 'admin' ? [{ id: 'admin', label: 'Dashboard', icon: LayoutDashboard, path: '/admin' }] : []),
                   { id: 'cart', label: 'Cart', icon: ShoppingCart, path: '/cart', count: cart.length },
                   { id: 'profile', label: 'Account', icon: UserIcon, path: '/profile' }
                 ].map((item) => {
