@@ -1,9 +1,9 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { 
-  createRootRoute, 
-  createRoute, 
-  createRouter, 
-  RouterProvider, 
+import {
+  createRootRoute,
+  createRoute,
+  createRouter,
+  RouterProvider,
   Outlet,
   useNavigate,
   useParams,
@@ -25,6 +25,7 @@ import { Cart } from './views/Cart';
 import { Checkout } from './views/Checkout';
 import { Trades } from './views/Trades';
 import { Admin } from './views/Admin';
+import { Contact } from './views/Contact';
 import { orders } from './data/orders';
 import { QuickViewModal } from './components/QuickViewModal';
 import { CompareModal } from './components/CompareModal';
@@ -109,7 +110,7 @@ const productDetailRoute = createRoute({
     const product = context.products.find((p: Product) => p.id === productId);
     if (!product) return <div className="p-20 text-center text-white/40 uppercase font-black tracking-widest">Unit Not Found.</div>;
     return (
-      <ProductDetail 
+      <ProductDetail
         product={product}
         relatedProducts={context.products.filter((p: Product) => p.category === product.category && p.id !== product.id).slice(0, 4)}
         addToCart={context.addToCart}
@@ -156,6 +157,12 @@ const tradesRoute = createRoute({
   },
 });
 
+const contactRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/contact',
+  component: () => <Contact />,
+});
+
 const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/profile',
@@ -199,6 +206,7 @@ const routeTree = rootRoute.addChildren([
   tradesRoute,
   profileRoute,
   authRoute,
+  contactRoute,
   adminRoute,
 ]);
 
@@ -206,7 +214,7 @@ const memoryHistory = createMemoryHistory({
   initialEntries: ['/'],
 });
 
-const router = createRouter({ 
+const router = createRouter({
   routeTree,
   history: memoryHistory,
   defaultPreload: 'intent',
@@ -220,12 +228,12 @@ function RootComponent() {
   const [user, setUser] = useState<User | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [repairs, setRepairs] = useState<RepairRequest[]>([]);
-  
+
   const [isCompareOpen, setIsCompareOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | 'All'>('All');
-  const [notification, setNotification] = useState<{msg: string, type: 'success' | 'error'} | null>(null);
+  const [notification, setNotification] = useState<{ msg: string, type: 'success' | 'error' } | null>(null);
 
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -335,11 +343,11 @@ function RootComponent() {
 
   const handleCheckout = async (total: number) => {
     if (!user) { notify('Auth required.', 'error'); return; }
-    
+
     try {
       // Create order in Supabase
       const order = await createOrder(cart, user.id);
-      
+
       // Create local order for UI compatibility
       const newOrder: Order = {
         id: order.id,
@@ -351,7 +359,7 @@ function RootComponent() {
         date: order.created_at,
         paymentMethod: 'Credit Card'
       };
-      
+
       setOrders([newOrder, ...orders]);
       setCart([]);
       notify('Transaction Authorized.');
@@ -376,13 +384,13 @@ function RootComponent() {
       {showWelcomeScreen && (
         <WelcomeScreen onComplete={() => setShowWelcomeScreen(false)} />
       )}
-      
+
       <div className={`flex flex-col min-h-screen bg-black text-white selection:bg-[#B38B21] selection:text-black ${showWelcomeScreen ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-        <Navbar 
-          user={user} 
-          cart={cart} 
-          searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery} 
+        <Navbar
+          user={user}
+          cart={cart}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           setIsMobileMenuOpen={setIsMobileMenuOpen}
         />
 
@@ -391,7 +399,7 @@ function RootComponent() {
         </main>
 
         {compareIds.length > 0 && (
-          <button 
+          <button
             onClick={() => setIsCompareOpen(true)}
             className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] px-10 py-5 bg-[#B38B21] text-black font-black rounded-full text-[10px] uppercase tracking-[0.4em] flex items-center gap-4 shadow-[0_10px_40px_rgba(179,139,33,0.4)] transition-transform hover:scale-105"
           >
@@ -399,24 +407,24 @@ function RootComponent() {
           </button>
         )}
 
-        <QuickViewModal 
-          isOpen={isQuickViewOpen} 
-          onClose={() => setIsQuickViewOpen(false)} 
-          product={quickViewProduct} 
-          onAddToCart={addToCart} 
+        <QuickViewModal
+          isOpen={isQuickViewOpen}
+          onClose={() => setIsQuickViewOpen(false)}
+          product={quickViewProduct}
+          onAddToCart={addToCart}
         />
 
-        <CompareModal 
-          isOpen={isCompareOpen} 
-          onClose={() => setIsCompareOpen(false)} 
-          products={products.filter(p => compareIds.includes(p.id))} 
-          onRemove={toggleCompare} 
-          onAddToCart={(p) => addToCart(p)} 
+        <CompareModal
+          isOpen={isCompareOpen}
+          onClose={() => setIsCompareOpen(false)}
+          products={products.filter(p => compareIds.includes(p.id))}
+          onRemove={toggleCompare}
+          onAddToCart={(p) => addToCart(p)}
         />
 
         {notification && (
           <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[130] px-8 py-5 rounded-full shadow-2xl animate-in slide-in-from-bottom-10 flex items-center gap-5 bg-[#B38B21] text-black border-none">
-            {notification.type === 'success' ? <CheckCircle2 size={18}/> : <Activity size={18}/>}
+            {notification.type === 'success' ? <CheckCircle2 size={18} /> : <Activity size={18} />}
             <p className="font-bold text-[10px] uppercase tracking-[0.3em]">{notification.msg}</p>
           </div>
         )}
@@ -424,10 +432,10 @@ function RootComponent() {
         {isMobileMenuOpen && (
           <div className="fixed inset-0 z-[100] bg-black/98 backdrop-blur-3xl flex flex-col items-center justify-center p-8 text-center animate-in fade-in duration-500">
             <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-8 right-8 p-4 bg-white/5 rounded-full">
-              <X size={32}/>
+              <X size={32} />
             </button>
             <div className="flex flex-col gap-10 text-4xl font-black italic uppercase tracking-widest">
-              {['home', 'store', 'cart', 'repair', 'trades', 'profile'].map((v) => (
+              {['home', 'store', 'cart', 'repair', 'trades', 'contact', 'profile'].map((v) => (
                 <button key={v} onClick={() => navigateTo(v === 'profile' ? 'profile' : v)} className="hover:text-[#B38B21] transition-colors">
                   {v}
                 </button>
