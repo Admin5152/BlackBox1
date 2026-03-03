@@ -156,3 +156,24 @@ body {
   color: var(--bb-text);
 }
 
+/* Auth form transition (login ↔ signup) */
+@keyframes authFormIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes authFormIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+

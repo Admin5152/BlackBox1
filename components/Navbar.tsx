@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, User as UserIcon, Wrench, ShoppingCart, Home, ShoppingBag, RefreshCcw, Sun, Moon } from 'lucide-react';
+import { Menu, User as UserIcon, Wrench, ShoppingCart, Home, ShoppingBag, RefreshCcw, Sun, Moon, LayoutDashboard } from 'lucide-react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { User, CartItem } from '../types';
 
@@ -42,13 +42,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItemClass = (path: string) => {
     const active = location.pathname === path;
     if (isLight) {
-      return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${
-        active ? 'bg-black text-white shadow-md' : 'text-black/60 hover:text-black hover:bg-black/5'
-      }`;
+      return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${active ? 'bg-black text-white shadow-md' : 'text-black/60 hover:text-black hover:bg-black/5'
+        }`;
     }
-    return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${
-      active ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.25)]' : 'text-white/40 hover:text-white hover:bg-white/5 hover:shadow-[0_0_16px_rgba(205,160,50,0.5)]'
-    }`;
+    return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${active ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.25)]' : 'text-white/40 hover:text-white hover:bg-white/5 hover:shadow-[0_0_16px_rgba(205,160,50,0.5)]'
+      }`;
   };
 
   return (
@@ -72,6 +70,9 @@ export const Navbar: React.FC<NavbarProps> = ({
           <Link to="/store" className={navItemClass('/store')}><ShoppingBag size={16} /> Products</Link>
           <Link to="/trades" className={navItemClass('/trades')}><RefreshCcw size={16} /> Trades</Link>
           <Link to="/repair" className={navItemClass('/repair')}><Wrench size={16} /> Repairs</Link>
+          {user?.role === 'admin' && (
+            <Link to="/admin" className={navItemClass('/admin')}><LayoutDashboard size={16} /> Dashboard</Link>
+          )}
           <Link to="/cart" className={navItemClass('/cart')}>
             <ShoppingCart size={16} /> Cart
             {cartCount > 0 && (
@@ -99,11 +100,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => setTheme(isLight ? 'dark' : 'light')}
-              className={`p-2.5 rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 ${
-                isLight
-                  ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
-                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
-              }`}
+              className={`p-2.5 rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 ${isLight
+                ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
+                : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
+                }`}
               aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
             >
               {isLight ? <Moon size={18} /> : <Sun size={18} />}
@@ -169,8 +169,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 //   </svg>
 // );
 
-// export const Navbar: React.FC<NavbarProps> = ({ 
-//   user, cart, searchQuery, setSearchQuery, setIsMobileMenuOpen 
+// export const Navbar: React.FC<NavbarProps> = ({
+//   user, cart, searchQuery, setSearchQuery, setIsMobileMenuOpen
 // }) => {
 //   const location = useLocation();
 //   const cartCount = cart.reduce((a, c) => a + c.quantity, 0);

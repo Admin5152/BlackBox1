@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ChevronRight, ArrowRight, Smartphone, Laptop as LaptopIcon, Gamepad2, Package, Settings, 
+import {
+  ChevronRight, ArrowRight, Smartphone, Laptop as LaptopIcon, Gamepad2, Package, Settings,
   Users, Award, TrendingUp, Star, Quote, ArrowLeftRight, Wrench, Mail, Phone, MapPin
 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
@@ -21,54 +21,54 @@ interface HomeProps {
   theme: 'light' | 'dark';
 }
 
-export const Home: React.FC<HomeProps> = ({ 
+export const Home: React.FC<HomeProps> = ({
   products, setSelectedCategory, onQuickView, wishlist, toggleWishlist, onAddToCart, compareIds, onToggleCompare, user, theme
 }) => {
   const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
+
   // Get images for current theme
   const themeImages = getImagesForTheme(theme);
-  
+
   // Auto-rotate images every 4 seconds
   useEffect(() => {
     if (themeImages.length === 0) return;
-    
+
     const interval = setInterval(() => {
       setCurrentImageIndex((prev) => (prev + 1) % themeImages.length);
     }, 4000);
-    
+
     return () => clearInterval(interval);
   }, [themeImages]);
 
   if (!products || products.length === 0) return null;
 
   const categories = [
-    { 
-      name: "iPhone" as Category, 
-      desc: "Latest iPhone models and premium hardware", 
-      img: "https://images.unsplash.com/photo-1722710682948-22b556b528ce", 
+    {
+      name: "iPhone" as Category,
+      desc: "Latest iPhone models and premium hardware",
+      img: "https://images.unsplash.com/photo-1722710682948-22b556b528ce",
       icon: Smartphone,
       products: products.filter(p => p.category === 'iPhone').slice(0, 3)
     },
-    { 
-      name: "Laptop" as Category, 
-      desc: "Elite MacBooks and pro performance machines", 
-      img: "https://images.unsplash.com/photo-1671777560821-707c83d0305f", 
+    {
+      name: "Laptop" as Category,
+      desc: "Elite MacBooks and pro performance machines",
+      img: "https://images.unsplash.com/photo-1671777560821-707c83d0305f",
       icon: LaptopIcon,
       products: products.filter(p => p.category === 'Laptop').slice(0, 3)
     },
-    { 
-      name: "Gaming" as Category, 
-      desc: "Next-gen consoles and immersive controllers", 
-      img: "https://images.unsplash.com/photo-1606813907291-d86ebb9474ad", 
+    {
+      name: "Gaming" as Category,
+      desc: "Next-gen consoles and immersive controllers",
+      img: "https://images.unsplash.com/photo-1606813907291-d86ebb9474ad",
       icon: Gamepad2,
       products: products.filter(p => p.category === 'Gaming').slice(0, 3)
     },
-    { 
-      name: "Accessories" as Category, 
-      desc: "Premium accessories and tech essentials", 
-      img: "https://images.unsplash.com/photo-1556656793-062ff987b50d", 
+    {
+      name: "Accessories" as Category,
+      desc: "Premium accessories and tech essentials",
+      img: "https://images.unsplash.com/photo-1556656793-062ff987b50d",
       icon: Package,
       products: products.filter(p => p.category === 'Accessories').slice(0, 3)
     }
@@ -83,31 +83,29 @@ export const Home: React.FC<HomeProps> = ({
   ];
 
   return (
-    <div className="view-transition bg-black overflow-hidden no-print">      
+    <div className="view-transition bg-black overflow-hidden no-print">
       {/* Main Content */}
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center py-20 px-8 overflow-hidden">
         {/* Background with tech accessories */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-black subtle-texture"></div>
-          
+
           {/* Single Background Image with Slideshow */}
           {themeImages.length > 0 && (
             <div className="absolute inset-0 overflow-hidden">
               {themeImages.map((img, index) => (
-                <img 
+                <img
                   key={img.filename}
                   src={`/${img.filename}`}
                   alt={img.description}
-                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-2000 ease-in-out ${
-                    index === currentImageIndex 
-                      ? 'opacity-100 scale-100' 
+                  className={`absolute inset-0 w-full h-full object-cover transition-all duration-2000 ease-in-out ${index === currentImageIndex
+                      ? 'opacity-100 scale-100'
                       : 'opacity-0 scale-105'
-                  }`}
-                  style={{ 
-                    filter: `${
-                      theme === 'light' && img.filename === 'BlackBox.jpeg' ? 'invert(1) brightness(1.2)' : ''
-                    }`,
+                    }`}
+                  style={{
+                    filter: `${theme === 'light' && img.filename === 'BlackBox.jpeg' ? 'invert(1) brightness(1.2)' : ''
+                      }`,
                     transform: index === currentImageIndex ? 'scale(1)' : 'scale(1.1)'
                   }}
                   loading="lazy"
@@ -115,64 +113,58 @@ export const Home: React.FC<HomeProps> = ({
               ))}
             </div>
           )}
-          
+
           {/* Dark overlay for text readability */}
-          <div className={`absolute inset-0 ${
-            theme === 'dark' 
-              ? 'bg-gradient-to-r from-black/60 via-transparent to-black/40' 
+          <div className={`absolute inset-0 ${theme === 'dark'
+              ? 'bg-gradient-to-r from-black/60 via-transparent to-black/40'
               : 'bg-gradient-to-r from-black/20 via-transparent to-black/10'
-          }`}></div>
+            }`}></div>
         </div>
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Side - Main Content */}
             <div className="space-y-8 animate-in fade-in slide-in-from-left-10 duration-1000 stagger-1">
-              <h1 className={`text-5xl md:text-7xl lg:text-[5rem] font-heading font-bold tracking-wider leading-[0.9] ${
-          theme === 'dark' ? 'text-off-white' : 'text-gray-900'
-        }`}>
+              <h1 className={`text-5xl md:text-7xl lg:text-[5rem] font-heading font-bold tracking-wider leading-[0.9] ${theme === 'dark' ? 'text-off-white' : 'text-gray-900'
+                }`}>
                 Redefining Your
                 <br />
-                <span className={`bg-gradient-to-r bg-clip-text text-transparent ${
-                  theme === 'dark' 
-                    ? 'from-[#D4AF37] to-[#F4E4C1]' 
+                <span className={`bg-gradient-to-r bg-clip-text text-transparent ${theme === 'dark'
+                    ? 'from-[#D4AF37] to-[#F4E4C1]'
                     : 'from-[#B38B21] to-[#D4AF37]'
-                }`}>
+                  }`}>
                   Tech Experience
                 </span>
               </h1>
-              
+
               <div className="space-y-4 max-w-lg animate-in fade-in slide-in-from-left-8 duration-1000 delay-100 stagger-2">
-                <p className={`text-lg font-light leading-relaxed ${
-                  theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <p className={`text-lg font-light leading-relaxed ${theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                   Premium tech products, expert repairs, and seamless trade-ins for the modern enthusiast.
                 </p>
               </div>
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-in fade-in slide-in-from-left-8 duration-1000 delay-200 stagger-3">
-                <Link 
-                  to="/store" 
-                  className={`btn-press inline-flex px-12 py-5 rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(255,255,255,0.3)] active:scale-95 ${
-                    theme === 'dark' 
-                      ? 'bg-white text-black hover:shadow-[0_20px_60px_rgba(255,255,255,0.3)]' 
+                <Link
+                  to="/store"
+                  className={`btn-press inline-flex px-12 py-5 rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(255,255,255,0.3)] active:scale-95 ${theme === 'dark'
+                      ? 'bg-white text-black hover:shadow-[0_20px_60px_rgba(255,255,255,0.3)]'
                       : 'bg-black text-white hover:shadow-[0_20px_60px_rgba(0,0,0,0.2)]'
-                  }`}
+                    }`}
                 >
-                  Browse Products 
+                  Browse Products
                   <ArrowRight className="transition-transform group-hover:translate-x-2" size={18} />
                 </Link>
-                
-                <Link 
-                  to="/profile" 
-                  className={`btn-press inline-flex px-12 py-5 rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 ${
-                    theme === 'dark'
+
+                <Link
+                  to="/profile"
+                  className={`btn-press inline-flex px-12 py-5 rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:scale-105 active:scale-95 ${theme === 'dark'
                       ? 'bg-black text-off-white border-2 border-white/20 hover:bg-white hover:text-black'
                       : 'bg-white text-black border-2 border-black/20 hover:bg-black hover:text-white'
-                  }`}
+                    }`}
                 >
-                  About Us 
+                  About Us
                   <ArrowRight className="transition-transform group-hover:translate-x-2" size={18} />
                 </Link>
               </div>
@@ -208,14 +200,14 @@ export const Home: React.FC<HomeProps> = ({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories.map((category, index) => (
-              <div 
+              <div
                 key={category.name}
                 className="group relative bg-gray-900 rounded-2xl overflow-hidden border border-gray-800 hover:border-[#D4AF37]/50 transition-all duration-300 hover:transform hover:scale-105"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
-                  <img 
-                    src={category.img} 
+                  <img
+                    src={category.img}
                     alt={category.name}
                     className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-300"
                   />
@@ -224,7 +216,7 @@ export const Home: React.FC<HomeProps> = ({
                     <category.icon size={20} className="text-white group-hover:text-black" />
                   </div>
                 </div>
-                
+
                 <div className="p-6 space-y-3">
                   <h3 className="text-xl font-heading font-semibold text-white tracking-wide">
                     {category.name}
@@ -233,7 +225,7 @@ export const Home: React.FC<HomeProps> = ({
                     {category.desc}
                   </p>
                   <div className="pt-4">
-                    <Link 
+                    <Link
                       to="/store"
                       onClick={() => setSelectedCategory(category.name)}
                       className="inline-flex items-center gap-2 text-[#D4AF37] hover:text-[#F4E4C1] transition-colors text-sm font-heading font-medium"
@@ -248,7 +240,7 @@ export const Home: React.FC<HomeProps> = ({
           </div>
 
           <div className="text-center mt-12">
-            <Link 
+            <Link
               to="/store"
               className="relative inline-flex px-10 py-4 border-2 border-[#D4AF37] text-[#D4AF37] rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:bg-[#D4AF37] hover:text-black hover:scale-105 group"
             >
@@ -275,7 +267,7 @@ export const Home: React.FC<HomeProps> = ({
             Trade-In & Upgrade
           </h2>
           <div className="w-32 h-0.5 bg-[#D4AF37] mx-auto"></div>
-          
+
           <div className="space-y-6 max-w-2xl mx-auto">
             <p className="text-2xl md:text-3xl text-[#D4AF37] font-heading font-semibold">
               Get up to GHC500 toward your next upgrade
@@ -286,7 +278,7 @@ export const Home: React.FC<HomeProps> = ({
           </div>
 
           <div className="pt-8">
-            <Link 
+            <Link
               to="/trades"
               className="relative inline-flex px-12 py-5 bg-[#D4AF37] text-black rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(212,175,55,0.4)] active:scale-95 group"
             >
@@ -314,7 +306,7 @@ export const Home: React.FC<HomeProps> = ({
                 Expert Repair Services
               </h2>
               <div className="w-24 h-0.5 bg-[#D4AF37]"></div>
-              
+
               <div className="space-y-6">
                 <p className="text-lg text-gray-300 leading-relaxed">
                   KNUST-certified diagnostics with precision circuit mapping.
@@ -324,7 +316,7 @@ export const Home: React.FC<HomeProps> = ({
                 </p>
               </div>
 
-              <Link 
+              <Link
                 to="/repair"
                 className="inline-flex px-12 py-5 bg-[#D4AF37] text-black rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-3 transition-all duration-300 hover:scale-105 hover:shadow-[0_20px_60px_rgba(212,175,55,0.4)] active:scale-95"
               >
@@ -334,8 +326,8 @@ export const Home: React.FC<HomeProps> = ({
             </div>
 
             <div className="relative">
-              <img 
-                src="https://images.unsplash.com/photo-1517336714467-d13a2323485d" 
+              <img
+                src="https://images.unsplash.com/photo-1517336714467-d13a2323485d"
                 className="rounded-2xl w-full object-cover aspect-video"
                 alt="Repair Service"
               />
@@ -353,7 +345,7 @@ export const Home: React.FC<HomeProps> = ({
                 We Are BlackBox
               </h2>
               <div className="w-24 h-0.5 bg-[#D4AF37]"></div>
-              
+
               <div className="space-y-6">
                 <div className="space-y-4">
                   <h3 className="text-2xl font-heading font-semibold text-[#D4AF37]">Our Mission</h3>
@@ -375,7 +367,7 @@ export const Home: React.FC<HomeProps> = ({
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link 
+                <Link
                   to="/profile"
                   className="inline-flex px-8 py-3 border-2 border-[#D4AF37] text-[#D4AF37] rounded-full text-sm font-heading font-semibold tracking-wider items-center gap-2 transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"
                 >
@@ -446,7 +438,7 @@ export const Home: React.FC<HomeProps> = ({
           <div className="carousel-container relative overflow-hidden">
             <div className="flex space-x-6 transition-transform duration-700 ease-out" style={{ transform: `translateX(-${currentReviewIndex * 336}px)` }}>
               {[...customerReviews, ...customerReviews].map((review, index) => (
-                <div 
+                <div
                   key={index}
                   className="flex-shrink-0 w-80 review-card rounded-2xl p-6"
                 >
@@ -465,17 +457,17 @@ export const Home: React.FC<HomeProps> = ({
                 </div>
               ))}
             </div>
-            
+
             {/* Manual Navigation Controls */}
-            <button 
+            <button
               className="carousel-btn prev"
               onClick={() => setCurrentReviewIndex((prev) => (prev === 0 ? customerReviews.length - 1 : prev - 1))}
               aria-label="Previous review"
             >
               <ChevronRight size={24} className="text-black rotate-180" />
             </button>
-            
-            <button 
+
+            <button
               className="carousel-btn next"
               onClick={() => setCurrentReviewIndex((prev) => (prev === customerReviews.length - 1 ? 0 : prev + 1))}
               aria-label="Next review"
@@ -483,7 +475,7 @@ export const Home: React.FC<HomeProps> = ({
               <ChevronRight size={24} className="text-black" />
             </button>
           </div>
-          
+
           {/* Carousel Dots */}
           <div className="carousel-dots">
             {customerReviews.map((_, index) => (
