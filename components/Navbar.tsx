@@ -103,8 +103,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setTheme(isLight ? 'dark' : 'light')}
               className={`p-2.5 rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 ${isLight
-                ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
-                : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
+                  ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
+                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
                 }`}
               aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
             >
