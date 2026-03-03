@@ -15,7 +15,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   const { theme, setTheme } = useAppContext();
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [showPassword, setShowPassword] = useState(false);
-    const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState({
     name: '',
     email: '',
     password: '',
@@ -27,7 +27,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Check for admin credentials (no account creation)
     if (formData.email === 'BlackBox@gmail.com' && formData.password === 'BlackBox') {
       // Create admin user object for session only
@@ -42,10 +42,10 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
       navigateTo('/admin');
       return;
     }
-    
+
     try {
       if (mode === "login") {
-        if (!formData.email || !formData.password){
+        if (!formData.email || !formData.password) {
           alert("All Fields are Required!!");
           return;
         }
@@ -62,7 +62,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
         }
 
         const { user } = await signIn(formData.email, formData.password);
-        
+
         if (user) {
           const profile = await getUserProfile(user.id);
           const userObj: User = {
@@ -77,13 +77,13 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
         }
       }
       else if (mode === "signup") {
-        if (!formData.name || !formData.email || !formData.password){
+        if (!formData.name || !formData.email || !formData.password) {
           alert("All Fields are Required!!");
           return;
         }
 
         const { user } = await signUp(formData.email, formData.password);
-        
+
         if (user) {
           const profile = await getUserProfile(user.id);
           const userObj: User = {
@@ -103,7 +103,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
     }
   };
 
-  
+
 
   const isDark = theme === 'dark';
   const leftBg = isDark ? 'bg-black' : 'bg-[#E8E8E8]';
@@ -125,10 +125,10 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
       <div className={`relative w-full max-w-[900px] overflow-hidden px-10 py-10 ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
         {/* Corner frame border */}
         <div className="pointer-events-none absolute inset-0">
-          <div className={`absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 rounded-tl-2xl ${frameBorder}`} />
-          <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl ${frameBorder}`} />
-          <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl ${frameBorder}`} />
-          <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl ${frameBorder}`} />
+          <div className={`absolute top-4 left-4 w-48 h-32 border-t-2 border-l-2 rounded-tl-2xl ${frameBorder}`} />
+          <div className={`absolute top-4 right-4 w-48 h-32 border-t-2 border-r-2 rounded-tr-2xl ${frameBorder}`} />
+          <div className={`absolute bottom-4 left-4 w-48 h-32 border-b-2 border-l-2 rounded-bl-2xl ${frameBorder}`} />
+          <div className={`absolute bottom-4 right-4 w-48 h-32 border-b-2 border-r-2 rounded-br-2xl ${frameBorder}`} />
         </div>
         <div className="flex flex-col lg:flex-row min-h-0">
           {/* LEFT: Brand — grid-aligned padding; content ends at same vertical as form */}
@@ -137,11 +137,11 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
                   <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className={`w-full h-full object-contain ${leftText}`}>
-                    <path d="M25 40V28C25 26.3431 26.3431 25 28 25H40" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                    <path d="M60 25H72C73.6569 25 75 26.3431 75 28V40" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                    <path d="M75 60V72C75 73.6569 73.6569 75 72 75H60" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                    <path d="M40 75H28C26.3431 75 25 73.6569 25 72V60" stroke="currentColor" strokeWidth="8" strokeLinecap="round"/>
-                    <rect x="38" y="44" width="24" height="12" rx="6" fill="currentColor"/>
+                    <path d="M25 40V28C25 26.3431 26.3431 25 28 25H40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M60 25H72C73.6569 25 75 26.3431 75 28V40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M75 60V72C75 73.6569 73.6569 75 72 75H60" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <path d="M40 75H28C26.3431 75 25 73.6569 25 72V60" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
+                    <rect x="38" y="44" width="24" height="12" rx="6" fill="currentColor" />
                   </svg>
                 </div>
                 <span className={`text-sm font-black tracking-widest uppercase italic ${leftText}`}>BLACK BOX.</span>
@@ -192,7 +192,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
                       value={formData.name}
                       onChange={handleInputChange}
                       autoComplete="name"
-                    className={`w-full glow-border ${inputBg} rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${inputPh} ${cardText}`}
+                      className={`w-full glow-border ${inputBg} rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${inputPh} ${cardText}`}
                       placeholder="Your name"
                     />
                   </div>
@@ -210,7 +210,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
                     value={formData.email}
                     onChange={handleInputChange}
                     autoComplete="email"
-                  className={`w-full glow-border ${inputBg} rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${inputPh} ${cardText}`}
+                    className={`w-full glow-border ${inputBg} rounded-xl pl-9 pr-4 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${inputPh} ${cardText}`}
                     placeholder="identity@blackbox.gh"
                   />
                 </div>
@@ -227,7 +227,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
                     value={formData.password}
                     onChange={handleInputChange}
                     autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                  className={`w-full glow-border ${inputBg} rounded-xl pl-9 pr-9 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${inputPh} ${cardText}`}
+                    className={`w-full glow-border ${inputBg} rounded-xl pl-9 pr-9 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${inputPh} ${cardText}`}
                     placeholder="••••••••"
                   />
                   <button
@@ -242,7 +242,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
               </div>
               <button
                 type="submit"
-              className="w-full  py-3 bg-[#CDA032] text-black font-black rounded-xl text-xs uppercase tracking-[0.15em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2"
+                className="w-full  py-3 bg-[#CDA032] text-black font-black rounded-xl text-xs uppercase tracking-[0.15em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2"
               >
                 {mode === 'login' ? 'Login now' : 'Create account'}
               </button>
