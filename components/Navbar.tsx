@@ -51,19 +51,30 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <nav
-      className={`sticky top-0 z-[60] h-16 sm:h-20 lg:h-24 flex items-center border-b backdrop-blur-3xl no-print ${isLight ? 'border-black/10 bg-[#FAFAFA]/95' : 'border-white/5'}`}
+      className={`fixed top-0 left-0 right-0 z-[100] h-16 sm:h-20 lg:h-24 flex items-center border-b backdrop-blur-3xl no-print ${isLight ? 'border-black/10 bg-[#FAFAFA]/95' : 'border-white/5'}`}
       style={isLight ? undefined : { backgroundColor: 'rgba(18,18,18,0.95)' }}
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between gap-3">
-        <Link to="/" className="flex items-center gap-3 group transition-opacity">
-          <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center ${isLight ? 'bg-black text-white' : 'bg-white text-black'}`}>
-            <ViewfinderLogo />
-          </div>
-          <div className="hidden sm:block">
-            <h1 className={`text-lg font-black tracking-tighter leading-none ${isLight ? 'text-black' : 'text-white'}`}>BLACKBOX</h1>
-            <p className={`text-[9px] font-black tracking-[0.3em] uppercase ${isLight ? 'text-black/50' : 'text-white/50'}`}></p>
-          </div>
-        </Link>
+        <div className="flex items-center gap-4">
+          {location.pathname === '/admin' && (
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className={`p-2.5 rounded-full transition-all ${isLight ? 'text-black/60 hover:text-black hover:bg-black/5' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
+              aria-label="Toggle sidebar"
+            >
+              <Menu size={20} />
+            </button>
+          )}
+          <Link to="/" className="flex items-center gap-3 group transition-opacity">
+            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center ${isLight ? 'bg-black text-white' : 'bg-white text-black'}`}>
+              <ViewfinderLogo />
+            </div>
+            <div className="hidden sm:block">
+              <h1 className={`text-lg font-black tracking-tighter leading-none ${isLight ? 'text-black' : 'text-white'}`}>BLACKBOX</h1>
+              <p className={`text-[9px] font-black tracking-[0.3em] uppercase ${isLight ? 'text-black/50' : 'text-white/50'}`}></p>
+            </div>
+          </Link>
+        </div>
 
         <div className="hidden lg:flex items-center gap-1">
           <Link to="/" className={navItemClass('/')}><Home size={16} /> Home</Link>
@@ -103,8 +114,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               type="button"
               onClick={() => setTheme(isLight ? 'dark' : 'light')}
               className={`p-2.5 rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 ${isLight
-                  ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
-                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
+                ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
+                : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
                 }`}
               aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
             >

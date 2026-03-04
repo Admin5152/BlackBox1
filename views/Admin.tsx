@@ -20,7 +20,8 @@ import {
   X,
   Home,
   Settings,
-  FileText
+  FileText,
+  ArrowLeft
 } from 'lucide-react';
 
 interface AdminProps {
@@ -302,24 +303,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
   );
 
   return (
-    <div className="min-h-screen bg-black flex flex-col lg:flex-row">
-      {/* Mobile Top Header (Visible only on mobile) */}
-      <div className="lg:hidden sticky top-0 z-40 border-b border-white/5 bg-[#0a0a0a]">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
-            <div className="flex-1 max-w-2xl w-full flex items-center justify-end">
-              <button
-                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-all border border-white/10 bg-[#0d0d0b] text-white"
-              >
-                <Menu size={16} />
-                Menu
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+    <div className="min-h-screen bg-black flex flex-col lg:flex-row pt-16 sm:pt-20 lg:pt-24">
       {/* Mobile backdrop */}
       {isSidebarOpen && (
         <div
@@ -330,7 +314,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
       {/* Sidebar */}
       <div
         className={`
-          fixed lg:sticky top-0 h-screen inset-y-0 left-0 z-[80]
+          fixed lg:sticky top-16 sm:top-20 lg:top-24 h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] lg:h-[calc(100vh-96px)] inset-y-0 left-0 z-[80]
           ${isSidebarOpen ? 'translate-x-0 w-72 sm:w-80 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'}
           bg-gradient-to-b from-[#0a0a0a] to-[#050505] border-r border-white/5
           transition-transform duration-300 flex flex-col shrink-0
@@ -363,14 +347,22 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
 
         <nav className="flex-1 p-4 space-y-2">
           {[
+            { id: 'store', label: 'Store', icon: ArrowLeft, action: () => navigateTo?.('home') },
             { id: 'overview', label: 'Overview', icon: Home },
             { id: 'orders', label: 'Orders', icon: ShoppingCart },
             { id: 'customers', label: 'Customers', icon: Users },
             { id: 'products', label: 'Products', icon: Package },
-          ].map((item) => (
+          ].map((item: any) => (
             <button
               key={item.id}
-              onClick={() => { setActiveSection(item.id as any); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
+              onClick={() => {
+                if (item.action) {
+                  item.action();
+                } else {
+                  setActiveSection(item.id as any);
+                }
+                if (window.innerWidth < 1024) setIsSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${activeSection === item.id
                 ? 'bg-[#B38B21] text-black'
                 : 'text-white/40 hover:text-white hover:bg-white/5'
