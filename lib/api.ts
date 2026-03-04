@@ -2,13 +2,53 @@ import { supabase } from './supabase';
 import { Product, User, Order, CartItem } from '../types';
 
 // Authentication
-export const signUp = async (email: string, password: string) => {
+export const signUp = async (
+  email: string,
+  password: string,
+  name: string,
+  role: 'user' | 'admin' = 'user'
+) => {
+  // 1️⃣ Create auth user
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
   });
-  
+
   if (error) throw error;
+
+  const user = data.user;
+
+  if (user) {
+    // 2️⃣ Insert profile
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        id: user.id,
+        name,
+        role,
+        email: user.email
+      });
+
+    try {
+      // Create user profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          name: name,
+          email: email,
+          role: role
+        });
+
+      if (profileError) {
+        console.error('Profile creation error:', profileError);
+        // We don't throw here to ensure the user still gets the auth success
+      }
+    } catch (e) {
+      console.warn('Profile insertion was skipped or failed:', e);
+    }
+  }
+
   return data;
 };
 
@@ -17,7 +57,7 @@ export const signIn = async (email: string, password: string) => {
     email,
     password,
   });
-  
+
   if (error) throw error;
   return data;
 };
@@ -38,7 +78,7 @@ export const getUserProfile = async (userId: string) => {
     .select('*')
     .eq('id', userId)
     .single();
-  
+
   if (error) throw error;
   return data;
 };
@@ -49,9 +89,9 @@ export const getProducts = async (): Promise<Product[]> => {
     .from('products')
     .select('*')
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
-  
+
   return data.map(product => ({
     id: product.id,
     name: product.name,
@@ -74,10 +114,10 @@ export const getProduct = async (id: string): Promise<Product | null> => {
     .select('*')
     .eq('id', id)
     .single();
-  
+
   if (error) throw error;
   if (!data) return null;
-  
+
   return {
     id: data.id,
     name: data.name,
@@ -110,7 +150,7 @@ export const createProduct = async (product: Omit<Product, 'id'>) => {
     })
     .select()
     .single();
-  
+
   if (error) throw error;
   return data;
 };
@@ -132,7 +172,7 @@ export const updateProduct = async (id: string, updates: Partial<Product>) => {
     .eq('id', id)
     .select()
     .single();
-  
+
   if (error) throw error;
   return data;
 };
@@ -142,14 +182,14 @@ export const deleteProduct = async (id: string) => {
     .from('products')
     .delete()
     .eq('id', id);
-  
+
   if (error) throw error;
 };
 
 // Orders
 export const createOrder = async (items: CartItem[], userId: string) => {
   const totalPrice = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
+
   // Create order
   const { data: order, error: orderError } = await supabase
     .from('orders')
@@ -159,9 +199,9 @@ export const createOrder = async (items: CartItem[], userId: string) => {
     })
     .select()
     .single();
-  
+
   if (orderError) throw orderError;
-  
+
   // Create order items
   const orderItems = items.map(item => ({
     order_id: order.id,
@@ -169,13 +209,13 @@ export const createOrder = async (items: CartItem[], userId: string) => {
     quantity: item.quantity,
     price: item.price
   }));
-  
+
   const { error: itemsError } = await supabase
     .from('order_items')
     .insert(orderItems);
-  
+
   if (itemsError) throw itemsError;
-  
+
   return order;
 };
 
@@ -197,15 +237,15 @@ export const getOrders = async (userId?: string): Promise<Order[]> => {
       )
     `)
     .order('created_at', { ascending: false });
-  
+
   if (userId) {
     query = query.eq('user_id', userId);
   }
-  
+
   const { data, error } = await query;
-  
+
   if (error) throw error;
-  
+
   return data.map(order => ({
     id: order.id,
     userId: order.user_id,
@@ -246,10 +286,10 @@ export const getOrder = async (id: string): Promise<Order | null> => {
     `)
     .eq('id', id)
     .single();
-  
+
   if (error) throw error;
   if (!data) return null;
-  
+
   return {
     id: data.id,
     userId: data.user_id,
@@ -277,9 +317,9 @@ export const getUsers = async (): Promise<User[]> => {
     .from('profiles')
     .select('*')
     .order('created_at', { ascending: false });
-  
+
   if (error) throw error;
-  
+
   return data.map(profile => ({
     id: profile.id,
     email: profile.email,
@@ -295,7 +335,7 @@ export const updateUserRole = async (userId: string, role: 'user' | 'admin') => 
     .eq('id', userId)
     .select()
     .single();
-  
+
   if (error) throw error;
   return data;
 };

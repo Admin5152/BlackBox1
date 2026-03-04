@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import type { User } from '../interface/interface';
 import { users } from '../data/userInfo';
@@ -13,11 +14,40 @@ interface LoginProps {
 
 export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navigateTo }) => {
     const { theme } = useAppContext();
+=======
+import type { User } from '../interface/interface';
+import { users } from '../data/userInfo';
+import { signIn, getUserProfile } from '../lib/api';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+
+interface LoginProps {
+    setUser: (user: User) => void;
+    navigateTo: (view: string) => void;
+    isDark: boolean;
+    cardText: string;
+    cardMuted: string;
+    inputBg: string;
+    inputPh: string;
+}
+
+export const Login: React.FC<LoginProps> = ({
+    setUser,
+    navigateTo,
+    isDark,
+    cardText,
+    cardMuted,
+    inputBg,
+    inputPh,
+}) => {
+
+>>>>>>> main
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     });
+<<<<<<< HEAD
     const [isLoading, setIsLoading] = useState(false);
 
     const isDark = theme === 'dark';
@@ -25,6 +55,8 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
     const cardMuted = isDark ? 'text-white/50' : 'text-black/50';
     const inputBg = isDark ? 'bg-white/5 focus:bg-white/10' : 'bg-[#F5F5F5] focus:bg-white';
     const inputPh = isDark ? 'placeholder:text-white/25' : 'placeholder:text-black/25';
+=======
+>>>>>>> main
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -32,24 +64,42 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+<<<<<<< HEAD
         setIsLoading(true);
 
         // Check for admin credentials
+=======
+
+        // Check for admin credentials (no account creation)
+>>>>>>> main
         if (formData.email === 'BlackBox@gmail.com' && formData.password === 'BlackBox') {
             const adminUser: User = {
                 id: 'admin-001',
                 name: 'Admin User',
                 email: 'BlackBox@gmail.com',
                 password: 'BlackBox',
+<<<<<<< HEAD
                 role: 'admin'
             };
             onSuccess(adminUser);
             navigateTo('/admin');
             setIsLoading(false);
+=======
+                role: 'admin',
+            };
+            setUser(adminUser);
+            navigateTo('/admin');
+            return;
+        }
+
+        if (!formData.email || !formData.password) {
+            alert('All Fields are Required!!');
+>>>>>>> main
             return;
         }
 
         try {
+<<<<<<< HEAD
             if (!formData.email || !formData.password) {
                 alert("All Fields are Required!!");
                 setIsLoading(false);
@@ -57,14 +107,22 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
             }
 
             // Check against local static users list
+=======
+            // Check against local static users list first
+>>>>>>> main
             const localUser = users.find(
                 (u) => u.email === formData.email && u.password === formData.password
             );
 
             if (localUser) {
+<<<<<<< HEAD
                 onSuccess(localUser);
                 navigateTo(localUser.role === 'admin' ? '/admin' : 'home');
                 setIsLoading(false);
+=======
+                setUser(localUser);
+                navigateTo('home');
+>>>>>>> main
                 return;
             }
 
@@ -77,6 +135,7 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
                     name: profile?.name || user.email?.split('@')[0] || 'User',
                     email: user.email || '',
                     password: formData.password,
+<<<<<<< HEAD
                     role: profile?.role || 'user'
                 };
                 onSuccess(userObj);
@@ -86,11 +145,24 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
             alert(error.message || "Authentication failed");
         } finally {
             setIsLoading(false);
+=======
+                    role: profile?.role || 'user',
+                };
+                setUser(userObj);
+                navigateTo('home');
+            }
+        } catch (error: any) {
+            alert(error.message || 'Authentication failed');
+>>>>>>> main
         }
     };
 
     return (
+<<<<<<< HEAD
         <div className={`flex flex-col h-full ${cardText}`}>
+=======
+        <>
+>>>>>>> main
             <div className="mb-4">
                 <h2 className="text-lg font-black italic tracking-tighter uppercase">
                     Login to your account
@@ -102,11 +174,19 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
 
             <form onSubmit={handleSubmit} className="space-y-2.5 flex-1 min-h-0 flex flex-col">
                 <div className="space-y-1">
+<<<<<<< HEAD
                     <label htmlFor="login-email" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Email</label>
                     <div className="relative">
                         <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
                         <input
                             id="login-email"
+=======
+                    <label htmlFor="auth-email" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Email</label>
+                    <div className="relative">
+                        <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
+                        <input
+                            id="auth-email"
+>>>>>>> main
                             type="email"
                             name="email"
                             required
@@ -119,11 +199,19 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
                     </div>
                 </div>
                 <div className="space-y-1">
+<<<<<<< HEAD
                     <label htmlFor="login-password" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Password</label>
                     <div className="relative">
                         <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
                         <input
                             id="login-password"
+=======
+                    <label htmlFor="auth-password" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Password</label>
+                    <div className="relative">
+                        <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
+                        <input
+                            id="auth-password"
+>>>>>>> main
                             type={showPassword ? 'text' : 'password'}
                             name="password"
                             required
@@ -145,6 +233,7 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
                 </div>
                 <button
                     type="submit"
+<<<<<<< HEAD
                     disabled={isLoading}
                     className="w-full py-3 bg-[#CDA032] text-black font-black rounded-xl text-xs uppercase tracking-[0.15em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -162,5 +251,13 @@ export const Login: React.FC<LoginProps> = ({ onSuccess, onSwitchToSignUp, navig
                 </button>
             </div>
         </div>
+=======
+                    className="w-full py-3 bg-[#CDA032] text-black font-black rounded-xl text-xs uppercase tracking-[0.15em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2"
+                >
+                    Login now
+                </button>
+            </form>
+        </>
+>>>>>>> main
     );
 };

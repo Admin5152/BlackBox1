@@ -13,7 +13,7 @@ export const users: User[] = [
     id: "123457",
     name: "Seth Agyei",
     email: "sethscam@gmail.com",
-    role: "user",
+    role: "admin",
     password: "scams123",
     wishlist: []
   }

@@ -23,9 +23,20 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   const leftMutedFoot = isDark ? 'text-white/30' : 'text-black/30';
   const dividerColor = isDark ? 'border-white/10' : 'border-black/10';
 
+  const sharedProps = {
+    setUser,
+    navigateTo,
+    isDark,
+    cardText,
+    cardMuted,
+    inputBg,
+    inputPh,
+  };
+
   return (
     <div className={`view-transition flex-1 min-h-0 flex items-center justify-center p-4 lg:p-6 overflow-auto ${isDark ? 'bg-black' : 'bg-[#F0F0F0]'}`}>
       {/* Single card: gridline-based layout — all divisions end at same top/bottom/center */}
+<<<<<<< HEAD
       <div className={`relative w-full max-w-[900px] overflow-hidden px-4 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
         {/* Corner frame border */}
         <div className="pointer-events-none absolute inset-0">
@@ -33,6 +44,15 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
           <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl ${frameBorder}`} />
           <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl ${frameBorder}`} />
           <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl ${frameBorder}`} />
+=======
+      <div className={`relative w-full max-w-[900px] overflow-hidden px-10 py-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
+        {/* Corner frame border — morphs with card resize */}
+        <div className="pointer-events-none absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
+          <div className={`absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 rounded-tl-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
+          <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
+          <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
+          <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
+>>>>>>> main
         </div>
         <div className="flex flex-col lg:flex-row min-h-0">
           {/* LEFT: Brand */}
@@ -70,6 +90,7 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
 
           <div className={`hidden lg:block w-px flex-shrink-0 ${dividerColor} self-stretch`} style={{ background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }} />
 
+<<<<<<< HEAD
           {/* RIGHT: Form */}
           <div className={`lg:w-[55%] ${rightBg} flex flex-col p-6`}>
             {mode === 'login' ? (
@@ -85,6 +106,37 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
                 navigateTo={navigateTo}
               />
             )}
+=======
+          {/* RIGHT: Form — same padding so headers/footers align with left */}
+          <div className={`lg:w-[55%] ${rightBg} flex flex-col p-6 ${cardText}`}>
+            <div
+              key={mode}
+              className="flex-1 min-h-0 flex flex-col"
+              style={{
+                animation: 'authFormIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+              }}
+            >
+              {mode === 'login' ? (
+                <Login {...sharedProps} />
+              ) : (
+                <SignUp {...sharedProps} />
+              )}
+            </div>
+
+            <div className="pt-4 mt-auto border-t flex-shrink-0" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>
+              <button
+                type="button"
+                onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
+                className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} hover:opacity-100 hover:text-[#CDA032] transition-all italic focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] rounded px-1 py-0.5`}
+              >
+                {mode === 'login' ? (
+                  <>Don't have an account? <span className="text-[#CDA032] ml-1">Sign up</span></>
+                ) : (
+                  <>Already have an account? <span className="text-[#CDA032] ml-1">Log in</span></>
+                )}
+              </button>
+            </div>
+>>>>>>> main
           </div>
         </div>
       </div>

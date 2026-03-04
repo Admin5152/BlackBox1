@@ -8,7 +8,6 @@ import {
   useNavigate,
   useParams,
   useLocation,
-  createMemoryHistory
 } from '@tanstack/react-router';
 import { X, CheckCircle2, Activity, Scale, RefreshCcw, Home as HomeIcon, ShoppingBag, Wrench, ShoppingCart, User as UserIcon, LogOut, ChevronRight, ChevronDown, Settings, LayoutDashboard } from 'lucide-react';
 import { Product, User, CartItem, Category, RepairRequest, Order } from './types';
@@ -208,13 +207,8 @@ const routeTree = rootRoute.addChildren([
   adminRoute,
 ]);
 
-const memoryHistory = createMemoryHistory({
-  initialEntries: ['/'],
-});
-
 const router = createRouter({
   routeTree,
-  history: memoryHistory,
   defaultPreload: 'intent',
 } as any);
 
