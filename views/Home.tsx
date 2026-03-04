@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ChevronRight, ArrowRight, Smartphone, Laptop as LaptopIcon, Gamepad2, Package, Settings,
-  Users, Award, TrendingUp, Star, Quote, ArrowLeftRight, Wrench, Mail, Phone, MapPin
+  ChevronRight, ChevronLeft, ArrowRight, Smartphone, Laptop as LaptopIcon, Gamepad2, Package, Settings,
+  Users, Award, TrendingUp, Star, Quote, ArrowLeftRight, Wrench, Mail, Phone, MapPin, Search, Heart, Eye
 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { Product, Category } from '../types';
@@ -40,6 +40,12 @@ export const Home: React.FC<HomeProps> = ({
 
     return () => clearInterval(interval);
   }, [themeImages]);
+
+  const [currentHighlightsIndex, setCurrentHighlightsIndex] = useState(0);
+  const highlights = products.filter(p => ['Accessories', 'Gaming', 'Audio', 'iPhone'].includes(p.category)).slice(0, 6);
+
+  const nextHighlight = () => setCurrentHighlightsIndex((prev) => (prev + 1) % highlights.length);
+  const prevHighlight = () => setCurrentHighlightsIndex((prev) => (prev - 1 + highlights.length) % highlights.length);
 
   if (!products || products.length === 0) return null;
 
@@ -124,8 +130,8 @@ export const Home: React.FC<HomeProps> = ({
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Side - Main Content */}
-            <div className="space-y-8 animate-in fade-in slide-in-from-left-10 duration-1000 stagger-1">
-              <h1 className={`text-5xl md:text-7xl lg:text-[5rem] font-heading font-bold tracking-wider leading-[0.9] ${theme === 'dark' ? 'text-off-white' : 'text-gray-900'
+            <div className="space-y-8">
+              <h1 className={`text-4xl sm:text-5xl md:text-6xl lg:text-[5rem] font-heading font-bold tracking-wider leading-[1.1] lg:leading-[0.9] lg:min-h-[2.7em] ${theme === 'dark' ? 'text-off-white' : 'text-gray-900'
                 }`}>
                 Redefining Your
                 <br />
@@ -182,7 +188,7 @@ export const Home: React.FC<HomeProps> = ({
       </section>
 
       {/* Retail Section */}
-      <section className="py-24 px-8 bg-gradient-to-b from-black to-gray-950 section-connector">
+      <section className="py-12 md:py-16 px-8 bg-gradient-to-b from-black to-gray-950 section-connector">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-heading font-bold text-white tracking-wider mb-4">
@@ -251,19 +257,231 @@ export const Home: React.FC<HomeProps> = ({
         </div>
       </section>
 
-      {/* Trade-In Section */}
-      <section className="py-24 px-8 bg-black relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="absolute left-8 text-[#D4AF37]/10">
-            <ArrowLeftRight size={200} className="transform -rotate-45" />
+      {/* Quick Access / Accessories Slider */}
+      <section className={`py-6 md:py-10 overflow-hidden ${theme === 'dark' ? 'bg-black' : 'bg-[#f5f5f7]'}`}>
+        <div className="max-w-screen-2xl mx-auto">
+
+          <div className="flex items-center justify-end mb-6 px-4 md:px-8 gap-3">
+            <button
+              onClick={() => document.getElementById('accessories-slider')?.scrollBy({ left: -400, behavior: 'smooth' })}
+              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${theme === 'dark' ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'border-black/20 text-black hover:bg-black hover:text-white'}`}
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={() => document.getElementById('accessories-slider')?.scrollBy({ left: 400, behavior: 'smooth' })}
+              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${theme === 'dark' ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'border-black/20 text-black hover:bg-black hover:text-white'}`}
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          <div id="accessories-slider" className="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-4 md:px-8 pb-8" style={{ scrollPaddingLeft: 'max(1rem, env(safe-area-inset-left))' }}>
+            {/* Promo Card */}
+            <div className={`w-[300px] md:w-[400px] min-h-[400px] md:min-h-[500px] ${theme === 'dark' ? 'bg-[#111]' : 'bg-white'} ${theme === 'dark' ? 'text-white' : 'text-black'} p-8 md:p-12 rounded-[2rem] flex flex-col justify-between snap-start flex-shrink-0 shadow-sm border border-black/5 dark:border-white/5`}>
+              <div>
+                <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Take a peek</h2>
+                <p className={`text-lg md:text-xl ${theme === 'dark' ? 'text-white/70' : 'text-black/70'}`}>The accessories you love.<br />In a fresh mix of colors.</p>
+              </div>
+              <div className="flex justify-center mt-8">
+                <img src="/cases.jpeg" alt="Accessories" className="h-40 md:h-56 object-cover rounded-2xl drop-shadow-xl" />
+              </div>
+            </div>
+
+            {/* Product Cards */}
+            {products.filter(p => p.category === 'Accessories' || p.category === 'iPhone').slice(0, 8).map(p => (
+              <div
+                key={p.id}
+                onClick={() => onQuickView(p)}
+                className={`w-[260px] md:w-[300px] h-[360px] md:h-[420px] rounded-[2rem] snap-start flex-shrink-0 flex flex-col group cursor-pointer overflow-hidden relative shadow-lg ${theme === 'dark' ? 'bg-[#111]' : 'bg-[#ffffff]'}`}
+              >
+                <div className="pointer-events-none absolute inset-0 z-10">
+                  <div className={`absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 rounded-bl-[1.5rem] transition-colors ${theme === 'dark' ? 'border-white/20' : 'border-[#B38B21]/40'}`} />
+                  <div className={`absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 rounded-br-[1.5rem] transition-colors ${theme === 'dark' ? 'border-white/20' : 'border-[#B38B21]/40'}`} />
+                </div>
+
+                <div className="absolute top-0 inset-x-0 h-[60%] pt-8 px-8 transform group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+                  <img src={p.image} alt={p.name} className="w-full h-full object-contain filter drop-shadow-lg" />
+                </div>
+
+                <div className="absolute top-4 right-4 bg-black/10 dark:bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-md z-20 rounded-full px-4 py-2 hover:bg-black/20 dark:hover:bg-white/20">
+                  <span className={`text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                    <Search size={12} /> View
+                  </span>
+                </div>
+
+                <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col z-20 bg-gradient-to-t from-black/5 to-transparent dark:from-black/80 dark:to-transparent">
+                  <div className="flex items-center gap-2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={8} className={`${i < Math.floor(p.rating || 4) ? 'text-[#CDA032] fill-current' : theme === 'dark' ? 'text-white/20' : 'text-black/20'}`} />
+                    ))}
+                    <span className={`text-[9px] font-bold ml-1 ${theme === 'dark' ? 'text-white/50' : 'text-black/50'}`}>({p.reviewCount || 678})</span>
+                  </div>
+
+                  <h3 className={`font-black uppercase italic tracking-wider text-sm leading-tight mb-1 line-clamp-2 drop-shadow-sm ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                    {p.name}
+                  </h3>
+
+                  <div className="flex items-end justify-between mt-2">
+                    <div>
+                      <span className={`text-[9px] mb-0.5 block uppercase tracking-widest italic ${theme === 'dark' ? 'text-white/60' : 'text-black/60'}`}>{p.category}</span>
+                      <p className="font-black text-xl tracking-tighter text-[#CDA032] drop-shadow-sm">
+                        {formatCurrency(p.price)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); if (navigateTo) navigateTo('product', p.id); }}
+                        className={`w-10 h-10 rounded-full backdrop-blur-md transition-all flex items-center justify-center border hover:border-transparent hover:scale-110 active:scale-95 group/nav ${theme === 'dark' ? 'bg-black/40 text-white hover:bg-[#CDA032] border-white/20' : 'bg-white/40 text-black hover:bg-[#CDA032] border-black/10 shadow-sm'}`}
+                      >
+                        <ArrowRight size={16} className="group-hover/nav:-rotate-45 transition-transform" />
+                      </button>
+
+                      {/* Add to Cart Button */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onAddToCart(p); }}
+                        className="w-10 h-10 rounded-full bg-white/10 hover:bg-[#B38B21] backdrop-blur-md text-white hover:text-black transition-all flex items-center justify-center group/btn border border-white/20 hover:border-transparent hover:scale-110 active:scale-95"
+                      >
+                        <ShoppingCart size={16} className="group-hover/btn:-translate-x-0.5 transition-transform" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center mt-6 px-4">
+            <Link
+              to="/store"
+              search={{ category: 'Accessories' } as any}
+              className="group inline-flex items-center gap-4 px-10 py-5 bg-black dark:bg-white text-white dark:text-black rounded-full font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:scale-105 transition-all w-full md:w-auto justify-center"
+            >
+              View All Accessories
+              <div className="w-8 h-8 rounded-full bg-white/20 dark:bg-black/10 flex items-center justify-center group-hover:translate-x-2 transition-transform">
+                <ArrowRight size={16} />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Quick Access / Laptop Slider */}
+      <section className={`py-6 md:py-10 overflow-hidden ${theme === 'dark' ? 'bg-black' : 'bg-white'}`}>
+        <div className="max-w-screen-2xl mx-auto">
+
+          <div className="flex items-center justify-end mb-6 px-4 md:px-8 gap-3">
+            <button
+              onClick={() => document.getElementById('laptop-slider')?.scrollBy({ left: -400, behavior: 'smooth' })}
+              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${theme === 'dark' ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'border-black/20 text-black hover:bg-black hover:text-white'}`}
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={() => document.getElementById('laptop-slider')?.scrollBy({ left: 400, behavior: 'smooth' })}
+              className={`w-12 h-12 rounded-full border flex items-center justify-center transition-colors ${theme === 'dark' ? 'border-white/20 text-white hover:bg-white hover:text-black' : 'border-black/20 text-black hover:bg-black hover:text-white'}`}
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          <div id="laptop-slider" className="flex items-center gap-4 md:gap-6 overflow-x-auto no-scrollbar snap-x snap-mandatory px-4 md:px-8 pb-8" style={{ scrollPaddingLeft: 'max(1rem, env(safe-area-inset-left))' }}>
+            {/* Promo Card */}
+            <div className={`w-[300px] md:w-[400px] min-h-[400px] md:min-h-[500px] ${theme === 'dark' ? 'bg-[#0A0A0A]' : 'bg-[#F2F4F7]'} ${theme === 'dark' ? 'text-white' : 'text-black'} p-8 md:p-12 rounded-[2rem] flex flex-col justify-between snap-start flex-shrink-0 shadow-sm border border-black/5 dark:border-white/5 relative overflow-hidden group`}>
+              <div className="relative z-10">
+                <h2 className="text-3xl md:text-5xl font-black italic tracking-tighter uppercase leading-tight mb-4">Laptops.</h2>
+                <p className={`text-lg md:text-xl font-bold uppercase tracking-widest ${theme === 'dark' ? 'text-white/40' : 'text-black/40'}`}>Elite MacBooks and<br />Performance machines.</p>
+              </div>
+              <div className="flex justify-center mt-8 relative z-10 transform group-hover:scale-110 transition-transform duration-700">
+                <img
+                  src="https://images.unsplash.com/photo-1517336714467-d13a2323485d?q=80&w=800&auto=format&fit=crop"
+                  alt="Laptops"
+                  className="h-40 md:h-56 object-contain drop-shadow-2xl"
+                />
+              </div>
+              <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#CDA032]/20 rounded-full blur-[60px] group-hover:scale-150 transition-transform duration-1000"></div>
+            </div>
+
+            {/* Product Cards */}
+            {products.filter(p => p.category === 'Laptop').map(p => (
+              <div
+                key={p.id}
+                onClick={() => onQuickView(p)}
+                className={`w-[260px] md:w-[300px] h-[360px] md:h-[420px] rounded-[2rem] snap-start flex-shrink-0 flex flex-col group cursor-pointer overflow-hidden relative shadow-lg ${theme === 'dark' ? 'bg-[#111]' : 'bg-[#ffffff]'}`}
+              >
+                <div className="pointer-events-none absolute inset-0 z-10">
+                  <div className={`absolute bottom-2 left-2 w-12 h-12 border-b-2 border-l-2 rounded-bl-[1.5rem] transition-colors ${theme === 'dark' ? 'border-white/20' : 'border-[#CDA032]/40'}`} />
+                  <div className={`absolute bottom-2 right-2 w-12 h-12 border-b-2 border-r-2 rounded-br-[1.5rem] transition-colors ${theme === 'dark' ? 'border-white/20' : 'border-[#CDA032]/40'}`} />
+                </div>
+
+                <div className="absolute top-0 inset-x-0 h-[60%] pt-8 px-8 transform group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+                  <img src={p.image} alt={p.name} className="w-full h-full object-contain filter drop-shadow-lg" />
+                </div>
+
+                <div className="absolute top-4 right-4 bg-black/10 dark:bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-md z-20 rounded-full px-4 py-2 hover:bg-black/20 dark:hover:bg-white/20">
+                  <span className={`text-[9px] font-black uppercase tracking-[0.2em] flex items-center gap-2 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                    <Search size={12} /> View
+                  </span>
+                </div>
+
+                <div className="absolute inset-x-0 bottom-0 p-6 flex flex-col z-20 bg-gradient-to-t from-black/5 to-transparent dark:from-black/80 dark:to-transparent">
+                  <div className="flex items-center gap-2 mb-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-y-2 group-hover:translate-y-0">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={8} className={`${i < Math.floor(p.rating || 4) ? 'text-[#CDA032] fill-current' : theme === 'dark' ? 'text-white/20' : 'text-black/20'}`} />
+                    ))}
+                    <span className={`text-[9px] font-bold ml-1 ${theme === 'dark' ? 'text-white/50' : 'text-black/50'}`}>({p.reviewCount || 678})</span>
+                  </div>
+
+                  <h3 className={`font-black uppercase italic tracking-wider text-sm leading-tight mb-1 line-clamp-2 drop-shadow-sm ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                    {p.name}
+                  </h3>
+
+                  <div className="flex items-end justify-between mt-2">
+                    <div>
+                      <span className={`text-[9px] mb-0.5 block uppercase tracking-widest italic ${theme === 'dark' ? 'text-white/60' : 'text-black/60'}`}>{p.category}</span>
+                      <p className="font-black text-xl tracking-tighter text-[#CDA032] drop-shadow-sm">
+                        {formatCurrency(p.price)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); if (navigateTo) navigateTo('product', p.id); }}
+                        className={`w-10 h-10 rounded-full backdrop-blur-md transition-all flex items-center justify-center border hover:border-transparent hover:scale-110 active:scale-95 group/nav ${theme === 'dark' ? 'bg-black/40 text-white hover:bg-[#CDA032] border-white/20' : 'bg-white/40 text-black hover:bg-[#CDA032] border-black/10 shadow-sm'}`}
+                      >
+                        <ArrowRight size={16} className="group-hover/nav:-rotate-45 transition-transform" />
+                      </button>
+
+                      <button
+                        onClick={(e) => { e.stopPropagation(); onAddToCart(p); }}
+                        className={`w-10 h-10 rounded-full backdrop-blur-md transition-all flex items-center justify-center group/btn border hover:border-transparent hover:scale-110 active:scale-95 ${theme === 'dark' ? 'bg-white/10 text-white hover:bg-[#CDA032] hover:text-black border-white/20' : 'bg-black/5 text-black hover:bg-[#CDA032] border-black/10 shadow-sm'}`}
+                      >
+                        <ShoppingCart size={16} className="group-hover/btn:-translate-x-0.5 transition-transform" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
           <div className="absolute right-8 text-[#D4AF37]/10">
             <ArrowLeftRight size={200} className="transform rotate-45" />
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto text-center relative z-10 space-y-8">
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-white tracking-wider">
+      {/* Trade-In Section */}
+      <section className="py-12 md:py-16 px-8 relative overflow-hidden bg-black text-white">
+        {/* Decorative Background Icons */}
+        <div className="absolute left-[-5%] top-1/2 -translate-y-1/2 opacity-10 -rotate-12 pointer-events-none">
+          <ArrowLeftRight size={300} className="text-[#CDA032]" />
+        </div>
+        <div className="absolute right-[-5%] top-1/2 -translate-y-1/2 opacity-10 rotate-12 pointer-events-none">
+          <ArrowLeftRight size={300} className="text-[#CDA032]" />
+        </div>
+
+        <div className="max-w-4xl mx-auto text-center relative z-10 flex flex-col items-center">
+          <h2 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
             Trade-In & Upgrade
           </h2>
           <div className="w-32 h-0.5 bg-[#D4AF37] mx-auto"></div>
@@ -294,10 +512,12 @@ export const Home: React.FC<HomeProps> = ({
       </section>
 
       {/* Repair Section */}
-      <section className="py-24 px-8 bg-gradient-to-b from-black to-gray-950 relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center opacity-5">
-          <Settings size={400} className="text-[#D4AF37]" />
-        </div>
+      <section className={`relative flex flex-col lg:flex-row min-h-[600px] w-full overflow-hidden border-t ${theme === 'dark' ? 'bg-[#0a0a0a] border-white/5' : 'bg-[#F4F4F4] border-black/5'}`}>
+        {/* Left Content */}
+        <div className="w-full lg:w-1/2 p-8 md:p-12 lg:px-24 lg:py-20 flex flex-col justify-center relative">
+          <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+            <Settings size={500} className={`${theme === 'dark' ? 'text-white' : 'text-black'}`} />
+          </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -336,15 +556,42 @@ export const Home: React.FC<HomeProps> = ({
         </div>
       </section>
 
-      {/* About Us Section */}
-      <section className="py-24 px-8 bg-black">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div className="space-y-8">
-              <h2 className="text-4xl md:text-5xl font-heading font-bold text-white tracking-wider">
-                We Are BlackBox
+      {/* Explore Grid Section (Bento-Box Layout) */}
+      <section className={`py-12 md:py-16 px-8 overflow-hidden transition-colors duration-500 ${theme === 'light' ? 'bg-[#F2F4F7]' : 'bg-[#0A0A0A]'
+        }`}>
+        <div className="max-w-[1440px] mx-auto">
+          {/* Header */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+              <h2 className={`text-4xl md:text-5xl font-black italic tracking-tighter uppercase mb-2 ${theme === 'light' ? 'text-black' : 'text-white'
+                }`}>
+                Explore Collection
               </h2>
-              <div className="w-24 h-0.5 bg-[#D4AF37]"></div>
+              <div className="w-20 h-1 bg-[#D4AF37]"></div>
+            </div>
+            {/* Filters / Navigation */}
+            <div className={`flex flex-wrap items-center gap-2 md:gap-4 p-2 rounded-full border ${theme === 'light' ? 'bg-white border-black/10' : 'bg-[#111] border-white/10'
+              }`}>
+              {['All Gear', 'Pro Series', 'Essentials'].map((filter) => {
+                const isActive = exploreFilter === filter;
+                return (
+                  <button
+                    key={filter}
+                    onClick={() => setExploreFilter(filter as any)}
+                    className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${isActive
+                      ? (theme === 'light' ? 'bg-black text-white shadow-lg' : 'bg-[#D4AF37] text-black shadow-[0_0_20px_rgba(212,175,55,0.3)]')
+                      : (theme === 'light' ? 'text-gray-500 hover:text-black hover:bg-black/5' : 'text-white/40 hover:text-white hover:bg-white/5')
+                      }`}
+                  >
+                    {filter}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Bento Grid layout */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 grid-rows-[auto] gap-4 md:gap-6 auto-rows-[240px] md:auto-rows-[280px]">
 
               <div className="space-y-6">
                 <div className="space-y-4">
@@ -360,10 +607,79 @@ export const Home: React.FC<HomeProps> = ({
                     Your reliable home for innovation, keeping you ahead with the latest tech improvements.
                   </p>
                 </div>
+                <div className="absolute right-0 bottom-0 top-0 w-1/2 overflow-hidden flex justify-end">
+                  <img src="/macbook.jpeg" alt="MacBook Promo" className="h-full object-cover transform scale-110 origin-right group-hover:scale-[1.15] transition-transform duration-[1.5s] mix-blend-multiply opacity-90" />
+                </div>
+                <div className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-black/40 hover:bg-white transition-colors cursor-pointer z-20">
+                  <ArrowRight size={16} />
+                </div>
+              </Link>
+            )}
 
-                <p className="text-xl text-off-white font-heading font-medium">
-                  BlackBox - Your Tech Partner
-                </p>
+            {(exploreFilter === 'All Gear' || exploreFilter === 'Essentials') && (
+              <Link to="/trades" className={`col-span-1 md:col-span-1 row-span-1 rounded-[2rem] p-8 relative overflow-hidden group transition-transform duration-500 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-end ${theme === 'light' ? 'bg-[#F9FAFB] shadow-inner' : 'bg-[#111] shadow-inner border border-white/5'}`}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-70"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#CDA032]/20 to-transparent z-20 mix-blend-overlay"></div>
+                <img src="/iPhone.jpeg" alt="Trade In Promo" className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[2s] z-0 filter saturate-150" />
+                <div className="relative z-30 transform group-hover:-translate-y-1 transition-transform">
+                  <div className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 inline-block mb-3">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-white">Avid Offers</span>
+                  </div>
+                  <h3 className="text-xl font-black italic tracking-tighter uppercase text-white shadow-black drop-shadow-lg">
+                    Trade-In Bonus
+                  </h3>
+                </div>
+                <div className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white/40">
+                  <Heart size={14} />
+                </div>
+              </Link>
+            )}
+
+            {(exploreFilter === 'All Gear' || exploreFilter === 'Pro Series') && (
+              <div className={`col-span-1 md:col-span-1 row-span-1 rounded-[2rem] p-6 flex flex-col relative overflow-hidden transition-all duration-500 hover:shadow-xl ${theme === 'light' ? 'bg-white' : 'bg-[#111] border border-white/5'}`}>
+                <div className="flex items-center justify-between mb-4">
+                  <span className={`text-[10px] font-black uppercase tracking-widest ${theme === 'light' ? 'text-black' : 'text-white'}`}>Highlights</span>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={prevHighlight}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${theme === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'} text-[#CDA032]`}
+                    >
+                      <ChevronLeft size={12} />
+                    </button>
+                    <button
+                      onClick={nextHighlight}
+                      className={`w-6 h-6 rounded-full flex items-center justify-center transition-colors ${theme === 'light' ? 'bg-black/5 hover:bg-black/10' : 'bg-white/5 hover:bg-white/10'} text-[#CDA032]`}
+                    >
+                      <ChevronRight size={12} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="flex-1 flex gap-3 pb-2 overflow-hidden relative">
+                  <div
+                    className="flex gap-3 transition-transform duration-500 ease-out h-full w-full"
+                    style={{ transform: `translateX(-${currentHighlightsIndex * 50}%)` }}
+                  >
+                    {highlights.map((p) => (
+                      <div
+                        key={p.id}
+                        onClick={() => onQuickView(p)}
+                        className={`min-w-[45%] rounded-2xl overflow-hidden relative group/mini cursor-pointer ${theme === 'light' ? 'bg-gray-100' : 'bg-[#050505]'} border border-white/5`}
+                      >
+                        <img src={p.image} alt={p.name} className="w-full h-full object-contain p-2 group-hover/mini:scale-110 transition-transform duration-700" />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/mini:opacity-100 transition-opacity flex items-center justify-center">
+                          <Eye size={12} className="text-white" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <button
+                  onClick={() => navigateTo('store')}
+                  className={`w-full py-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-colors ${theme === 'light' ? 'bg-gray-100 text-black hover:bg-[#CDA032]' : 'bg-white/5 text-white hover:bg-white/10'}`}
+                >
+                  See All
+                </button>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">

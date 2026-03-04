@@ -175,16 +175,73 @@ export const Checkout: React.FC = () => {
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">City</label>
-                      <input
-                        type="text"
-                        value={formData.city}
-                        onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                        className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 focus:border-[#B38B21] outline-none"
-                        placeholder="Accra"
-                      />
+                  {shippingMethod === 'deliver' && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Street Address <span className="text-red-500">*</span></label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.shippingAddress}
+                          onChange={(e) => setFormData({ ...formData, shippingAddress: e.target.value })}
+                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 focus:border-[#B38B21] outline-none text-white placeholder:text-white/40"
+                          placeholder="123 Main St"
+                        />
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Region <span className="text-red-500">*</span></label>
+                          <select
+                            required
+                            value={formData.region}
+                            onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                            className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 focus:border-[#B38B21] outline-none appearance-none"
+                            style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1rem center', backgroundSize: '1em' }}
+                          >
+                            <option value="" disabled>Select Region</option>
+                            <option value="Ashanti">Ashanti</option>
+                            <option value="Ahafo">Ahafo</option>
+                            <option value="Bono">Bono</option>
+                            <option value="Bono East">Bono East</option>
+                            <option value="Central">Central</option>
+                            <option value="Eastern">Eastern</option>
+                            <option value="Greater Accra">Greater Accra</option>
+                            <option value="Northern">Northern</option>
+                            <option value="North East">North East</option>
+                            <option value="Oti">Oti</option>
+                            <option value="Savannah">Savannah</option>
+                            <option value="Upper East">Upper East</option>
+                            <option value="Upper West">Upper West</option>
+                            <option value="Volta">Volta</option>
+                            <option value="Western">Western</option>
+                            <option value="Western North">Western North</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2">City/Town <span className="text-red-500">*</span></label>
+                          <input
+                            type="text"
+                            required
+                            value={formData.city}
+                            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                            className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 focus:border-[#B38B21] outline-none text-white placeholder:text-white/40"
+                            placeholder="Accra"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-medium mb-2">National Digital Address <span className="text-red-500">*</span></label>
+                        <input
+                          type="text"
+                          required
+                          value={formData.postalCode}
+                          onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                          className="w-full bg-black/50 border border-white/20 rounded-lg px-4 py-3 focus:border-[#B38B21] outline-none text-white placeholder:text-white/40"
+                          placeholder="GA-123-4567"
+                        />
+                      </div>
                     </div>
                     <div>
                       <label className="block text-sm font-medium mb-2">Postal Code</label>
@@ -346,7 +403,7 @@ export const Checkout: React.FC = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="space-y-6">
+          <div className="lg:col-span-1 space-y-6">
             <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sticky top-6">
               <h3 className="text-lg font-bold mb-4">Order Summary</h3>
 
