@@ -24,7 +24,6 @@ export const SignUp: React.FC<SignUpProps> = ({
     inputPh,
 }) => {
     const { addNotification } = useNotifications();
-    const [role, setRole] = useState<'user' | 'admin'>('user');
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
@@ -52,7 +51,7 @@ export const SignUp: React.FC<SignUpProps> = ({
         setIsLoading(true);
 
         try {
-            const { user } = await signUp(formData.email, formData.password, formData.name, role);
+            const { user } = await signUp(formData.email, formData.password, formData.name, 'user');
 
             if (user) {
                 // Success notification
@@ -88,7 +87,7 @@ export const SignUp: React.FC<SignUpProps> = ({
             addNotification({
                 type: 'error',
                 title: 'Sign Up Failed',
-                message: error.message || 'Authentication failed'
+                message: 'Failed to signUP'
             });
         } finally {
             setIsLoading(false);
@@ -107,18 +106,6 @@ export const SignUp: React.FC<SignUpProps> = ({
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-2.5 flex-1 min-h-0 flex flex-col">
-                <div className="space-y-1">
-                    <label htmlFor="auth-role" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Role</label>
-                    <select
-                        id="auth-role"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
-                        className={`w-full glow-border ${inputBg} rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${cardText}`}
-                    >
-                        <option value="user" className={isDark ? 'bg-gray-800' : 'bg-white'}>User</option>
-                        <option value="admin" className={isDark ? 'bg-gray-800' : 'bg-white'}>Admin</option>
-                    </select>
-                </div>
                 <div className="space-y-1">
                     <label htmlFor="auth-name" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Name</label>
                     <div className="relative">

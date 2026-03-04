@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import type { User } from '../interface/interface';
-import { users } from '../data/userInfo';
 import { signIn, getUserProfile } from '../lib/api';
 import { useNotifications } from '../contexts/NotificationContext';
 
@@ -51,45 +50,7 @@ export const Login: React.FC<LoginProps> = ({
         setIsLoading(true);
 
         try {
-            // Check for admin credentials (no account creation)
-            if (formData.email === 'BlackBox@gmail.com' && formData.password === 'BlackBox') {
-                const adminUser: User = {
-                    id: 'admin-001',
-                    name: 'Admin User',
-                    email: 'BlackBox@gmail.com',
-                    password: 'BlackBox',
-                    role: 'admin',
-                };
-                
-                addNotification({
-                    type: 'success',
-                    title: 'Login Successful!',
-                    message: 'Welcome back, Admin!'
-                });
-                
-                setUser(adminUser);
-                navigateTo('admin');
-                return;
-            }
-
-            // Check against local static users list first
-            const localUser = users.find(
-                (u) => u.email === formData.email && u.password === formData.password
-            );
-
-            if (localUser) {
-                addNotification({
-                    type: 'success',
-                    title: 'Login Successful!',
-                    message: `Welcome back, ${localUser.name}!`
-                });
-                
-                setUser(localUser);
-                navigateTo('home');
-                return;
-            }
-
-            // Try Supabase authentication
+            // Try Supabase authentication first
             const { user } = await signIn(formData.email, formData.password);
 
             if (user) {
@@ -109,7 +70,13 @@ export const Login: React.FC<LoginProps> = ({
                 });
 
                 setUser(userObj);
-                navigateTo('home');
+                
+                // Navigate based on user role
+                if (userObj.role === 'admin') {
+                    navigateTo('admin');
+                } else {
+                    navigateTo('home');
+                }
             } else {
                 addNotification({
                     type: 'error',

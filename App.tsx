@@ -9,9 +9,10 @@ import {
   useParams,
   useLocation,
 } from '@tanstack/react-router';
-import { X, CheckCircle2, Activity, Scale, RefreshCcw, Home as HomeIcon, ShoppingBag, Wrench, ShoppingCart, User as UserIcon, LogOut, ChevronRight, ChevronDown, Settings, MessageCircle, AlertTriangle, Sparkles } from 'lucide-react';
+import { X, CheckCircle2, Activity, Scale, RefreshCcw, Home as HomeIcon, ShoppingBag, Wrench, ShoppingCart, User as UserIcon, LogOut, ChevronRight, ChevronDown, Settings, LayoutDashboard } from 'lucide-react';
 import { Product, User, CartItem, Category, RepairRequest, Order } from './types';
-import { getProducts, createOrder } from './lib/api';
+import { getProducts, createOrder, signOut } from './lib/api';
+import { supabase } from './lib/supabase';
 import { INITIAL_PRODUCTS } from './constants';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -25,11 +26,6 @@ import { Cart } from './views/Cart';
 import { Checkout } from './views/Checkout';
 import { Trades } from './views/Trades';
 import { Admin } from './views/Admin';
-import { AboutUs } from './views/AboutUs';
-import { Contact } from './views/Contact';
-import { FAQ } from './views/FAQ';
-import { NotFound } from './views/NotFound';
-import { ErrorPage } from './views/ErrorPage';
 // import { orders } from './data/orders'; 
 import { QuickViewModal } from './components/QuickViewModal';
 import { CompareModal } from './components/CompareModal';
@@ -89,33 +85,9 @@ export const useAppContext = () => {
   return context;
 };
 
-// --- SCROLL TO TOP ---
-const ScrollToTop = () => {
-  const { pathname } = useLocation();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-};
-
-// --- ERROR & NOT FOUND WRAPPERS ---
-const NotFoundPage = () => {
-  const context = useContext(AppContext);
-  const theme = context?.theme || 'dark';
-  return <NotFound theme={theme as any} />;
-};
-
-const ErrorBoundary = ({ error, reset }: { error: any; reset: () => void }) => {
-  const context = useContext(AppContext);
-  const theme = context?.theme || 'dark';
-  return <ErrorPage error={error} reset={reset} theme={theme as any} />;
-};
-
 // --- ROUTES SETUP ---
 const rootRoute = createRootRoute({
   component: RootComponent,
-  notFoundComponent: NotFoundPage,
-  errorComponent: ErrorBoundary,
 });
 
 const indexRoute = createRoute({
@@ -141,18 +113,17 @@ const productDetailRoute = createRoute({
   path: '/product/$productId',
   component: () => {
     const { productId } = useParams({ from: productDetailRoute.id } as any);
-    const { products, theme, ...context } = useAppContext();
-    const product = products.find((p: Product) => p.id === productId);
-    if (!product) return <NotFound theme={theme} />;
+    const context = useAppContext();
+    const product = context.products.find((p: Product) => p.id === productId);
+    if (!product) return <div className="p-20 text-center text-white/40 uppercase font-black tracking-widest">Unit Not Found.</div>;
     return (
       <ProductDetail
         product={product}
-        relatedProducts={products.filter((p: Product) => p.category === product.category && p.id !== product.id).slice(0, 4)}
+        relatedProducts={context.products.filter((p: Product) => p.category === product.category && p.id !== product.id).slice(0, 4)}
         addToCart={context.addToCart}
         isWishlisted={context.wishlist.includes(product.id)}
         onToggleWishlist={context.toggleWishlist}
         navigateTo={context.navigateTo}
-        theme={context.theme}
       />
     );
   },
@@ -226,32 +197,6 @@ const adminRoute = createRoute({
   },
 });
 
-const aboutRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/about',
-  component: () => {
-    const context = useAppContext();
-    return <AboutUs theme={context.theme} />;
-  },
-});
-
-const faqRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/faq',
-  component: () => {
-    const context = useAppContext();
-    return <FAQ theme={context.theme} />;
-  },
-});
-
-const contactRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/contact',
-  component: () => {
-    return <Contact />;
-  },
-});
-
 const routeTree = rootRoute.addChildren([
   indexRoute,
   storeRoute,
@@ -263,9 +208,6 @@ const routeTree = rootRoute.addChildren([
   profileRoute,
   authRoute,
   adminRoute,
-  aboutRoute,
-  faqRoute,
-  contactRoute,
 ]);
 
 const router = createRouter({
@@ -431,6 +373,27 @@ function RootComponent() {
     }
   };
 
+  const handleSignOut = async () => {
+    console.log('Sign out button clicked');
+    try {
+      // Clear Supabase session
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Supabase sign out error:', error);
+      } else {
+        console.log('Supabase sign out successful');
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      // Always clear local state and storage
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      setUser(null);
+      navigateTo('home');
+      console.log('Local state cleared and navigation completed');
+    }
+  };
+
   const contextValues: AppContextType = {
     products, cart, wishlist, compareIds, user, orders, repairs,
     searchQuery, setSearchQuery, selectedCategory, setSelectedCategory,
@@ -446,8 +409,8 @@ function RootComponent() {
   const isLight = theme === 'light';
 
   return (
-    <AppContext.Provider value={contextValues}>
-      <ScrollToTop />
+    <NotificationProvider>
+      <AppContext.Provider value={contextValues}>
       {/* Welcome Screen */}
       {showWelcomeScreen && (
         <WelcomeScreen onComplete={() => setShowWelcomeScreen(false)} />
@@ -469,21 +432,12 @@ function RootComponent() {
         </main>
 
         {compareIds.length > 0 && (
-          <div className="fixed top-24 right-5 z-[100] flex items-center bg-[#B38B21] rounded-full shadow-[0_10px_40px_rgba(179,139,33,0.4)] transition-transform hover:scale-[1.02] overflow-hidden">
-            <button
-              onClick={() => setIsCompareOpen(true)}
-              className="pl-6 pr-4 py-4 text-black font-black text-[10px] uppercase tracking-[0.4em] flex items-center gap-3 border-r border-black/10 hover:bg-black/5 transition-colors"
-            >
-              <Scale size={16} /> Compare ({compareIds.length})
-            </button>
-            <button
-              onClick={() => setCompareIds([])}
-              className="px-4 py-4 text-black hover:bg-black/10 transition-colors"
-              aria-label="Clear Compare"
-            >
-              <X size={16} />
-            </button>
-          </div>
+          <button
+            onClick={() => setIsCompareOpen(true)}
+            className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] px-10 py-5 bg-[#B38B21] text-black font-black rounded-full text-[10px] uppercase tracking-[0.4em] flex items-center gap-4 shadow-[0_10px_40px_rgba(179,139,33,0.4)] transition-transform hover:scale-105"
+          >
+            <Scale size={18} /> Matrix ({compareIds.length})
+          </button>
         )}
 
         <QuickViewModal
@@ -504,45 +458,9 @@ function RootComponent() {
         />
 
         {notification && (
-          <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[200] w-[90%] max-w-sm pointer-events-none">
-            <div className={`
-                pointer-events-auto relative overflow-hidden flex items-center gap-5 px-6 py-4 rounded-[2rem] shadow-[0_30px_60px_rgba(234,88,12,0.15)] 
-                backdrop-blur-3xl border transition-all duration-500 animate-in slide-in-from-top-6 zoom-in-95
-                ${isLight
-                ? 'bg-white/95 border-[#EA580C]/10 text-black'
-                : 'bg-[#0A0A0A]/95 border-[#EA580C]/20 text-white'}
-              `}>
-              {/* Modern Orange/Gold Glow */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#EA580C]/5 to-transparent pointer-events-none" />
-              <div className="absolute -left-6 -top-6 w-24 h-24 bg-[#EA580C]/20 blur-3xl rounded-full pointer-events-none" />
-
-              <div className={`
-                  relative z-10 w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-[#EA580C]/30
-                  ${notification.type === 'success'
-                  ? 'bg-gradient-to-br from-[#EA580C] to-[#C2410C] text-white'
-                  : 'bg-gradient-to-br from-red-600 to-red-800 text-white'}
-                `}>
-                {notification.type === 'success' ? <Sparkles size={20} className="drop-shadow-md" /> : <AlertTriangle size={20} className="drop-shadow-md" />}
-              </div>
-
-              <div className="flex-1 min-w-0 relative z-10">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#EA580C] animate-pulse"></span>
-                  <p className="text-[9px] font-black uppercase tracking-[0.3em] text-[#EA580C]">
-                    {notification.type === 'success' ? 'System Update' : 'System Alert'}
-                  </p>
-                </div>
-                <p className="text-[13px] font-bold truncate tracking-normal opacity-90">{notification.msg}</p>
-              </div>
-
-              <button
-                onClick={() => setNotification(null)}
-                className={`p-2 rounded-lg transition-colors ${isLight ? 'hover:bg-black/5' : 'hover:bg-white/5'}`}
-                aria-label="Dismiss"
-              >
-                <X size={16} className="opacity-40" />
-              </button>
-            </div>
+          <div className="fixed bottom-8 left-8 z-[130] px-8 py-5 rounded-full shadow-2xl animate-in slide-in-from-bottom-10 flex items-center gap-5 bg-[#B38B21] text-black border-none">
+            {notification.type === 'success' ? <CheckCircle2 size={18} /> : <Activity size={18} />}
+            <p className="font-bold text-[10px] uppercase tracking-[0.3em]">{notification.msg}</p>
           </div>
         )}
 
@@ -578,8 +496,8 @@ function RootComponent() {
               <div className="p-6 border-b border-black/5 dark:border-white/5">
                 {user ? (
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#CDA032] flex items-center justify-center text-black font-black text-xl italic shadow-lg">
-                      {user.avatarLetter || user.name.charAt(0)}
+                    <div className="w-12 h-12 rounded-full bg-[#CDA032] flex items-center justify-center text-black font-black text-xl">
+                      {user.name.charAt(0)}
                     </div>
                     <div className="min-w-0">
                       <p className="font-black text-xs uppercase tracking-widest truncate">{user.name}</p>
@@ -600,68 +518,18 @@ function RootComponent() {
               <div className="flex-1 overflow-auto py-4 px-3 space-y-1">
                 {[
                   { id: 'home', label: 'Home', icon: HomeIcon, path: '/' },
-                  { id: 'store', label: 'Products', icon: ShoppingBag, path: '/store', subItems: ['iPhone', 'Laptop', 'Accessories', 'Gaming', 'Audio'] },
+                  { id: 'store', label: 'Products', icon: ShoppingBag, path: '/store' },
                   { id: 'trades', label: 'Trades', icon: RefreshCcw, path: '/trades' },
                   { id: 'repair', label: 'Repairs', icon: Wrench, path: '/repair' },
-                  { ...(user?.role === 'admin' ? [{ id: 'admin', label: 'Dashboard', icon: Settings, path: '/admin' }] : []),
+                  ...(user?.role === 'admin' ? [{ id: 'admin', label: 'Dashboard', icon: LayoutDashboard, path: '/admin' }] : []),
                   { id: 'cart', label: 'Cart', icon: ShoppingCart, path: '/cart', count: cart.length },
-                  { id: 'profile', label: 'Account', icon: UserIcon, path: '/profile' },
-                  { id: 'about', label: 'About Us', icon: Sparkles, path: '/about' },
-                  { id: 'contact', label: 'Contact', icon: MessageCircle, path: '/contact' }
-                ].map((item: any) => {
+                  { id: 'profile', label: 'Account', icon: UserIcon, path: '/profile' }
+                ].map((item) => {
                   const isActive = location.pathname === item.path;
-
-                  if (item.subItems) {
-                    return (
-                      <details key={item.id} className="group/nav w-full">
-                        <summary className={`list-none flex items-center justify-between p-4 rounded-xl transition-all cursor-pointer select-none ${isActive
-                          ? isLight ? 'bg-black text-white shadow-lg' : 'bg-white/10 text-white shadow-[0_0_20px_rgba(205,160,50,0.15)]'
-                          : isLight ? 'text-black/60 hover:bg-black/5' : 'text-white/40 hover:bg-white/5 hover:text-white'
-                          }`}
-                        >
-                          <div
-                            className="flex items-center gap-4 flex-1"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              navigateTo(item.path === '/' ? 'home' : item.id);
-                              setIsMobileMenuOpen(false);
-                            }}
-                          >
-                            <item.icon size={18} className={isActive ? 'text-[#CDA032]' : ''} />
-                            <span className="text-[11px] font-black uppercase tracking-[0.15em]">{item.label}</span>
-                          </div>
-
-                          <div className="flex items-center gap-2 pl-4">
-                            <ChevronDown size={14} className={`transition-transform duration-300 group-open/nav:rotate-180 ${isActive ? 'text-[#CDA032]' : ''}`} />
-                          </div>
-                        </summary>
-
-                        <div className="flex flex-col gap-1 pl-12 pr-4 pt-2 pb-4 animate-in fade-in slide-in-from-top-2">
-                          {item.subItems.map((sub: string) => (
-                            <button
-                              key={sub}
-                              onClick={() => {
-                                setSelectedCategory(sub as any);
-                                navigateTo('store');
-                                setIsMobileMenuOpen(false);
-                              }}
-                              className={`text-left py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-colors rounded-lg px-3 ${isLight ? 'text-black/50 hover:text-black hover:bg-black/5' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-                            >
-                              {sub}
-                            </button>
-                          ))}
-                        </div>
-                      </details>
-                    );
-                  }
-
                   return (
                     <button
                       key={item.id}
-                      onClick={() => {
-                        navigateTo(item.path === '/' ? 'home' : item.id);
-                        setIsMobileMenuOpen(false);
-                      }}
+                      onClick={() => navigateTo(item.id)}
                       className={`w-full flex items-center justify-between p-4 rounded-xl transition-all group ${isActive
                         ? isLight ? 'bg-black text-white shadow-lg' : 'bg-white/10 text-white shadow-[0_0_20px_rgba(205,160,50,0.15)]'
                         : isLight ? 'text-black/60 hover:bg-black/5' : 'text-white/40 hover:bg-white/5 hover:text-white'
@@ -691,7 +559,7 @@ function RootComponent() {
                 </p>
                 {user && (
                   <button
-                    onClick={() => { setUser(null); navigateTo('home'); }}
+                    onClick={handleSignOut}
                     className="w-full py-3 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 hover:bg-red-500/5 rounded-xl transition-all"
                   >
                     <LogOut size={14} /> Sign Out
@@ -704,7 +572,11 @@ function RootComponent() {
 
         <Footer theme={theme} />
       </div>
+      
+      {/* Notifications */}
+      <Notifications />
       </AppContext.Provider>
+    </NotificationProvider>
   );
 }
 

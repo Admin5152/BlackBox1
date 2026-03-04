@@ -10,6 +10,7 @@ import { User, RepairRequest, Order, Product } from '../types';
 import { formatDate, formatCurrency } from '../lib/utils';
 import { ProductCard } from '../components/ProductCard';
 import { OrderTracking } from '../components/OrderTracking';
+import { supabase } from '../lib/supabase';
 
 interface ProfileProps {
   user: User | null;
@@ -63,6 +64,25 @@ export const Profile: React.FC<ProfileProps> = ({
     }, 0);
     return orderTotal + repairTotal;
   }, [orders, repairs]);
+
+  const handleSignOut = async () => {
+    try {
+      // Clear Supabase session
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Supabase sign out error:', error);
+      } else {
+        console.log('Supabase sign out successful');
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      // Always clear local state
+      localStorage.removeItem('bb_v4_user');
+      setUser(null);
+      navigateTo('home');
+    }
+  };
 
   const menuItems = [
     { id: 'overview', icon: Sliders, label: 'Overview' },
@@ -687,7 +707,7 @@ export const Profile: React.FC<ProfileProps> = ({
               Help Center
             </button>
             <button
-              onClick={() => { setUser(null); navigateTo('home'); }}
+              onClick={handleSignOut}
               className={`flex items-center gap-3 px-5 py-3 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all border border-transparent ${isLight ? 'text-red-600 hover:bg-red-50' : 'text-red-400 hover:bg-red-500/10 hover:border-red-500/20'}`}
             >
               <LogOut size={16} />

@@ -36,11 +36,11 @@ export const Notifications: React.FC = () => {
   };
 
   return (
-    <div className="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+    <div className="fixed bottom-8 left-8 z-50 space-y-2 max-w-sm">
       {notifications.map((notification) => (
         <div
           key={notification.id}
-          className={`flex items-start p-4 rounded-lg border shadow-lg transition-all duration-300 transform animate-in slide-in-from-right ${getStyles(
+          className={`flex items-start p-4 rounded-lg border shadow-lg transition-all duration-300 transform animate-in slide-in-from-left ${getStyles(
             notification.type
           )}`}
         >
