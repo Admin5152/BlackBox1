@@ -29,6 +29,8 @@ import { Admin } from './views/Admin';
 import { QuickViewModal } from './components/QuickViewModal';
 import { CompareModal } from './components/CompareModal';
 import { WelcomeScreen } from './components/WelcomeScreen';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { Notifications } from './components/Notifications';
 import { generateId } from './lib/utils';
 
 const STORAGE_KEYS = {
@@ -385,7 +387,8 @@ function RootComponent() {
   const isLight = theme === 'light';
 
   return (
-    <AppContext.Provider value={contextValues}>
+    <NotificationProvider>
+      <AppContext.Provider value={contextValues}>
       {/* Welcome Screen */}
       {showWelcomeScreen && (
         <WelcomeScreen onComplete={() => setShowWelcomeScreen(false)} />
@@ -547,7 +550,11 @@ function RootComponent() {
 
         <Footer theme={theme} />
       </div>
-    </AppContext.Provider>
+      
+      {/* Notifications */}
+      <Notifications />
+      </AppContext.Provider>
+    </NotificationProvider>
   );
 }
 

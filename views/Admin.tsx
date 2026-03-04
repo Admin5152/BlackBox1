@@ -20,15 +20,10 @@ import {
   Menu,
   X,
   Home,
-<<<<<<< HEAD
+  LayoutDashboard,
   Settings,
   FileText,
   ArrowLeft
-=======
-  LayoutDashboard,
-  ArrowLeft,
-  FileText
->>>>>>> main
 } from 'lucide-react';
 
 interface AdminProps {
@@ -150,11 +145,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
       {/* Recent Orders */}
       <div className={`bg-gradient-to-br ${cardBg} border ${borderSubtle} rounded-3xl p-8 shadow-2xl`}>
         <div className="flex items-center justify-between mb-6">
-<<<<<<< HEAD
-          <h2 className="text-xl font-black italic uppercase tracking-tight text-white">Recent Orders</h2>
-=======
           <h2 className={`text-xl font-black italic uppercase tracking-tight ${textPrimary}`}>Recent Orders</h2>
->>>>>>> main
           <button
             onClick={() => setActiveSection('orders')}
             className="text-[10px] font-black uppercase tracking-widest text-[#B38B21] hover:text-[#D4AF37] transition-colors"
@@ -176,11 +167,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                   </div>
                 </div>
                 <div className="text-right">
-<<<<<<< HEAD
-                  <p className="text-xs font-black text-white/60">{order.date.toLocaleDateString()}</p>
-=======
                   <p className={`text-xs font-black ${textSecondary}`}>{order.date.toLocaleDateString()}</p>
->>>>>>> main
                   <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${order.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
                     order.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
                       order.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
@@ -334,11 +321,7 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
   );
 
   return (
-<<<<<<< HEAD
-    <div className="min-h-screen bg-black flex flex-col lg:flex-row pt-16 sm:pt-20 lg:pt-24">
-=======
-    <div className={`min-h-screen flex transition-colors duration-300`} style={{ backgroundColor: pageBg }}>
->>>>>>> main
+    <div className="min-h-screen bg-black flex flex-col lg:flex-row pt-16 sm:pt-20 lg:pt-24" style={{ backgroundColor: pageBg }}>
       {/* Mobile backdrop */}
       {isSidebarOpen && (
         <div
@@ -351,19 +334,13 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
         className={`
           fixed lg:sticky top-16 sm:top-20 lg:top-24 h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] lg:h-[calc(100vh-96px)] inset-y-0 left-0 z-[80]
           ${isSidebarOpen ? 'translate-x-0 w-72 sm:w-80 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'}
-<<<<<<< HEAD
-          bg-gradient-to-b from-[#0a0a0a] to-[#050505] border-r border-white/5
-          transition-transform duration-300 flex flex-col shrink-0
-        `}
-      >
-        <div className="p-6 border-b border-white/5 hidden lg:block">
-=======
+          fixed lg:sticky top-16 sm:top-20 lg:top-24 h-[calc(100vh-64px)] sm:h-[calc(100vh-80px)] lg:h-[calc(100vh-96px)] inset-y-0 left-0 z-[80]
+          ${isSidebarOpen ? 'translate-x-0 w-72 sm:w-80 lg:w-64' : '-translate-x-full lg:translate-x-0 lg:w-20'}
           bg-gradient-to-b ${sidebarBg} border-r ${borderSubtle}
           transition-all duration-300 flex flex-col
         `}
       >
         <div className={`p-6 border-b ${borderSubtle}`}>
->>>>>>> main
           <div className="flex items-center justify-between">
             <div className={`flex items-center gap-3 ${!isSidebarOpen && 'justify-center'}`}>
               {/* <div className="w-8 h-8 bg-[#B38B21] rounded flex items-center justify-center">
@@ -398,7 +375,6 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
           ].map((item: any) => (
             <button
               key={item.id}
-<<<<<<< HEAD
               onClick={() => {
                 if (item.action) {
                   item.action();
@@ -408,14 +384,8 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                 if (window.innerWidth < 1024) setIsSidebarOpen(false);
               }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${activeSection === item.id
-                ? 'bg-[#B38B21] text-black'
-                : 'text-white/40 hover:text-white hover:bg-white/5'
-=======
-              onClick={() => { setActiveSection(item.id as any); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all ${activeSection === item.id
                 ? 'bg-[#B38B21] text-black shadow-lg shadow-[#B38B21]/20'
                 : `${textMuted} hover:${textPrimary} hover:bg-black/5`
->>>>>>> main
                 }`}
             >
               <item.icon size={20} />
@@ -461,17 +431,6 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                   </p>
                 </div>
               </div>
-<<<<<<< HEAD
-              <div className="w-10 h-10 bg-gradient-to-br from-[#000000] to-[#000000] rounded-2xl flex items-center justify-center">
-                <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-6 h-6">
-                  <path d="M25 40V28C25 26.3431 26.3431 25 28 25H40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-                  <path d="M60 25H72C73.6569 25 75 26.3431 75 28V40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-                  <path d="M75 60V72C75 73.6569 73.6569 75 72 75H60" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-                  <path d="M40 75H28C26.3431 75 25 73.6569 25 72V60" stroke="currentColor" strokeWidth="8" strokeLinecap="round" />
-                  <rect x="38" y="44" width="24" height="12" rx="6" fill="currentColor" />
-                </svg>
-=======
-
               <div className="flex-1 max-w-xl w-full">
                 <div className="relative">
                   <Search className={`absolute left-3 top-1/2 -translate-y-1/2 ${textMuted}`} size={18} />
@@ -490,7 +449,6 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                   <p className={`text-xs font-black ${textPrimary} uppercase tracking-wider`}>Stanley Sam</p>
                   <p className={`text-[9px] ${textMuted} font-bold uppercase tracking-widest leading-none`}>Root Admin</p>
                 </div>
->>>>>>> main
               </div>
             </div>
           </div>
@@ -509,32 +467,6 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
           )}
         </main>
 
-<<<<<<< HEAD
-      {/* Order Detail Modal */}
-      {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/95 backdrop-blur-3xl" onClick={() => setSelectedOrder(null)} />
-          <div className="relative w-full max-w-2xl bg-gradient-to-br from-[#0a0a0a] to-[#050505] border border-white/5 rounded-3xl p-8 shadow-2xl">
-            <button
-              onClick={() => setSelectedOrder(null)}
-              className="absolute top-6 right-6 p-2 bg-white/5 hover:bg-white/10 rounded-full transition-all"
-            >
-              <X size={20} className="text-white" />
-            </button>
-
-            <div className="space-y-6">
-              <div>
-                <h3 className="text-lg font-black text-white mb-2">Order #{selectedOrder.id.slice(-6)}</h3>
-                <div className="flex items-center gap-4">
-                  <span className={`text-[8px] font-black uppercase tracking-wider px-2 py-1 rounded-full ${selectedOrder.status === 'delivered' ? 'bg-green-500/20 text-green-400' :
-                    selectedOrder.status === 'processing' ? 'bg-blue-500/20 text-blue-400' :
-                      selectedOrder.status === 'shipped' ? 'bg-purple-500/20 text-purple-400' :
-                        'bg-yellow-500/20 text-yellow-400'
-                    }`}>
-                    {selectedOrder.status}
-                  </span>
-                  <span className="text-xs text-white/40">{selectedOrder.date.toLocaleDateString()}</span>
-=======
         {/* Order Detail Modal */}
         {selectedOrder && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -560,7 +492,6 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
                     </span>
                     <span className={`text-xs ${textMuted}`}>{selectedOrder.date.toLocaleDateString()}</span>
                   </div>
->>>>>>> main
                 </div>
 
                 <div className={`border-t ${borderFaint} pt-4`}>
@@ -610,6 +541,6 @@ export const Admin: React.FC<AdminProps> = ({ setUser, navigateTo }) => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };

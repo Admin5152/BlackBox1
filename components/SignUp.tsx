@@ -1,22 +1,8 @@
 import React, { useState } from 'react';
-<<<<<<< HEAD
 import { Mail, Lock, User as UserIcon, Eye, EyeOff } from 'lucide-react';
 import type { User } from '../interface/interface';
 import { signUp, getUserProfile } from '../lib/api';
-import { useAppContext } from '../App';
-
-interface SignUpProps {
-    onSuccess: (user: User) => void;
-    onSwitchToLogin: () => void;
-    navigateTo: (view: string) => void;
-}
-
-export const SignUp: React.FC<SignUpProps> = ({ onSuccess, onSwitchToLogin, navigateTo }) => {
-    const { theme } = useAppContext();
-=======
-import type { User } from '../interface/interface';
-import { signUp as signUpApi, getUserProfile } from '../lib/api';
-import { Mail, Lock, User as UserIcon, Eye, EyeOff } from 'lucide-react';
+import { useNotifications } from '../contexts/NotificationContext';
 
 interface SignUpProps {
     setUser: (user: User) => void;
@@ -37,26 +23,15 @@ export const SignUp: React.FC<SignUpProps> = ({
     inputBg,
     inputPh,
 }) => {
+    const { addNotification } = useNotifications();
     const [role, setRole] = useState<'user' | 'admin'>('user');
->>>>>>> main
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
     });
-<<<<<<< HEAD
     const [isLoading, setIsLoading] = useState(false);
-
-    const isDark = theme === 'dark';
-    const cardText = isDark ? 'text-white' : 'text-black';
-    const cardMuted = isDark ? 'text-white/50' : 'text-black/50';
-    const inputBg = isDark ? 'bg-white/5 focus:bg-white/10' : 'bg-[#F5F5F5] focus:bg-white';
-    const inputPh = isDark ? 'placeholder:text-white/25' : 'placeholder:text-black/25';
-=======
-    const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-    const [statusMessage, setStatusMessage] = useState('');
->>>>>>> main
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -64,57 +39,28 @@ export const SignUp: React.FC<SignUpProps> = ({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-<<<<<<< HEAD
-        setIsLoading(true);
-
-        try {
-            if (!formData.name || !formData.email || !formData.password) {
-                alert("All Fields are Required!!");
-                setIsLoading(false);
-                return;
-            }
-
-            const { user } = await signUp(formData.email, formData.password);
-
-            if (user) {
-                const profile = await getUserProfile(user.id);
-                const userObj: User = {
-                    id: user.id,
-                    name: formData.name,
-                    email: user.email || '',
-                    password: formData.password,
-                    role: profile?.role || 'user'
-                };
-
-                // Friendly message as requested by the user
-                alert("We've sent a verification email to you please verify");
-
-                onSuccess(userObj);
-                navigateTo("home");
-            }
-        } catch (error: any) {
-            alert(error.message || "Authentication failed");
-        } finally {
-            setIsLoading(false);
-=======
-
-        setStatus('loading');
-        setStatusMessage('');
 
         if (!formData.name || !formData.email || !formData.password) {
-            setStatus('error');
-            setStatusMessage('All Fields are Required!!');
+            addNotification({
+                type: 'error',
+                title: 'Validation Error',
+                message: 'All fields are required!!'
+            });
             return;
         }
 
+        setIsLoading(true);
+
         try {
-            const { user } = await signUpApi(formData.email, formData.password, formData.name, role);
+            const { user } = await signUp(formData.email, formData.password, formData.name, role);
 
             if (user) {
-                // We show the success message regardless of profile fetch success
-                // because auth succeeded and verification email is sent.
-                setStatus('success');
-                setStatusMessage("We've sent a verification email to you please verify");
+                // Success notification
+                addNotification({
+                    type: 'success',
+                    title: 'Account Created Successfully!',
+                    message: "We've sent a verification email to you please verify"
+                });
 
                 try {
                     const profile = await getUserProfile(user.id);
@@ -131,27 +77,26 @@ export const SignUp: React.FC<SignUpProps> = ({
                 } catch (profileError) {
                     console.warn('Could not fetch profile, but user auth succeeded:', profileError);
                 }
-
-                // If it's a success, we might want to stay on this screen to show the message
-                // but if we want to navigate, we should probably add a timeout.
-                // For now, let's keep the user on the screen to read the verification message.
             } else {
-                setStatus('error');
-                setStatusMessage('Authentication failed');
+                addNotification({
+                    type: 'error',
+                    title: 'Authentication Failed',
+                    message: 'Unable to create account. Please try again.'
+                });
             }
         } catch (error: any) {
-            setStatus('error');
-            setStatusMessage(error.message || 'Authentication failed');
->>>>>>> main
+            addNotification({
+                type: 'error',
+                title: 'Sign Up Failed',
+                message: error.message || 'Authentication failed'
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-<<<<<<< HEAD
-        <div className={`flex flex-col h-full ${cardText}`}>
-=======
         <>
->>>>>>> main
             <div className="mb-4">
                 <h2 className="text-lg font-black italic tracking-tighter uppercase">
                     Create an account
@@ -163,19 +108,23 @@ export const SignUp: React.FC<SignUpProps> = ({
 
             <form onSubmit={handleSubmit} className="space-y-2.5 flex-1 min-h-0 flex flex-col">
                 <div className="space-y-1">
-<<<<<<< HEAD
-                    <label htmlFor="signup-name" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Name</label>
-                    <div className="relative">
-                        <UserIcon className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
-                        <input
-                            id="signup-name"
-=======
+                    <label htmlFor="auth-role" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Role</label>
+                    <select
+                        id="auth-role"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value as 'user' | 'admin')}
+                        className={`w-full glow-border ${inputBg} rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-[#CDA032] focus:ring-2 focus:ring-[#CDA032]/20 transition-all ${cardText}`}
+                    >
+                        <option value="user" className={isDark ? 'bg-gray-800' : 'bg-white'}>User</option>
+                        <option value="admin" className={isDark ? 'bg-gray-800' : 'bg-white'}>Admin</option>
+                    </select>
+                </div>
+                <div className="space-y-1">
                     <label htmlFor="auth-name" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Name</label>
                     <div className="relative">
                         <UserIcon className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
                         <input
                             id="auth-name"
->>>>>>> main
                             type="text"
                             name="name"
                             required
@@ -188,19 +137,11 @@ export const SignUp: React.FC<SignUpProps> = ({
                     </div>
                 </div>
                 <div className="space-y-1">
-<<<<<<< HEAD
-                    <label htmlFor="signup-email" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Email</label>
-                    <div className="relative">
-                        <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
-                        <input
-                            id="signup-email"
-=======
                     <label htmlFor="auth-email" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Email</label>
                     <div className="relative">
                         <Mail className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
                         <input
                             id="auth-email"
->>>>>>> main
                             type="email"
                             name="email"
                             required
@@ -213,19 +154,11 @@ export const SignUp: React.FC<SignUpProps> = ({
                     </div>
                 </div>
                 <div className="space-y-1">
-<<<<<<< HEAD
-                    <label htmlFor="signup-password" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Password</label>
-                    <div className="relative">
-                        <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
-                        <input
-                            id="signup-password"
-=======
                     <label htmlFor="auth-password" className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} ml-1 block`}>Password</label>
                     <div className="relative">
                         <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none ${cardMuted}`} size={16} aria-hidden />
                         <input
                             id="auth-password"
->>>>>>> main
                             type={showPassword ? 'text' : 'password'}
                             name="password"
                             required
@@ -245,59 +178,15 @@ export const SignUp: React.FC<SignUpProps> = ({
                         </button>
                     </div>
                 </div>
-<<<<<<< HEAD
+
                 <button
                     type="submit"
                     disabled={isLoading}
                     className="w-full py-3 bg-[#CDA032] text-black font-black rounded-xl text-xs uppercase tracking-[0.15em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    {isLoading ? 'Processing...' : 'Create account'}
+                    {isLoading ? 'Creating identity...' : 'Create account'}
                 </button>
-            </form>
-
-            <div className="pt-4 mt-auto border-t flex-shrink-0" style={{ borderColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }}>
-                <button
-                    type="button"
-                    onClick={onSwitchToLogin}
-                    className={`text-[10px] font-black uppercase tracking-widest ${cardMuted} hover:opacity-100 hover:text-[#CDA032] transition-all italic focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] rounded px-1 py-0.5`}
-                >
-                    Already have an account? <span className="text-[#CDA032] ml-1">Log in</span>
-                </button>
-            </div>
-        </div>
-=======
-                {status === 'error' && (
-                    <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
-                        <p className="text-[10px] text-red-500 font-bold uppercase tracking-wider text-center">
-                            {statusMessage}
-                        </p>
-                    </div>
-                )}
-
-                {status === 'success' ? (
-                    <div className="p-4 bg-green-500/10 border border-green-500/20 rounded-xl space-y-2">
-                        <p className="text-[11px] text-green-500 font-black uppercase tracking-widest text-center leading-relaxed">
-                            {statusMessage}
-                        </p>
-                        <button
-                            type="button"
-                            onClick={() => navigateTo('login')}
-                            className="w-full py-2 bg-green-500/20 hover:bg-green-500/30 text-green-500 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all"
-                        >
-                            Return to Login
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        type="submit"
-                        disabled={status === 'loading'}
-                        className="w-full py-3 bg-[#CDA032] text-black font-black rounded-xl text-xs uppercase tracking-[0.15em] shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        {status === 'loading' ? 'Creating identity...' : 'Create account'}
-                    </button>
-                )}
             </form>
         </>
->>>>>>> main
     );
 };

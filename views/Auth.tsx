@@ -22,6 +22,10 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   const leftMuted = isDark ? 'text-white/50' : 'text-black/50';
   const leftMutedFoot = isDark ? 'text-white/30' : 'text-black/30';
   const dividerColor = isDark ? 'border-white/10' : 'border-black/10';
+  const cardText = isDark ? 'text-white' : 'text-black';
+  const cardMuted = isDark ? 'text-white/50' : 'text-black/50';
+  const inputBg = isDark ? 'bg-white/5 focus:bg-white/10' : 'bg-[#F5F5F5] focus:bg-white';
+  const inputPh = isDark ? 'placeholder:text-white/25' : 'placeholder:text-black/25';
 
   const sharedProps = {
     setUser,
@@ -34,17 +38,8 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   };
 
   return (
-    <div className={`view-transition flex-1 min-h-0 flex items-center justify-center p-4 lg:p-6 overflow-auto ${isDark ? 'bg-black' : 'bg-[#F0F0F0]'}`}>
+    <div className={`view-transition flex-1 h-full flex items-center justify-center pt-20 px-4 lg:pt-12 lg:px-6 lg:pb-6 overflow-auto ${isDark ? 'bg-black' : 'bg-[#F0F0F0]'}`}>
       {/* Single card: gridline-based layout — all divisions end at same top/bottom/center */}
-<<<<<<< HEAD
-      <div className={`relative w-full max-w-[900px] overflow-hidden px-4 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
-        {/* Corner frame border */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className={`absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 rounded-tl-2xl ${frameBorder}`} />
-          <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl ${frameBorder}`} />
-          <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl ${frameBorder}`} />
-          <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl ${frameBorder}`} />
-=======
       <div className={`relative w-full max-w-[900px] overflow-hidden px-10 py-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
         {/* Corner frame border — morphs with card resize */}
         <div className="pointer-events-none absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
@@ -52,9 +47,8 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
           <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
           <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
           <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
->>>>>>> main
         </div>
-        <div className="flex flex-col lg:flex-row min-h-0">
+        <div className="flex flex-col lg:flex-row">
           {/* LEFT: Brand */}
           <div className={`lg:w-[45%] ${leftBg} flex flex-col justify-between`} style={{ padding: '24px' }}>
             <div className="flex flex-col gap-4">
@@ -90,23 +84,6 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
 
           <div className={`hidden lg:block w-px flex-shrink-0 ${dividerColor} self-stretch`} style={{ background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' }} />
 
-<<<<<<< HEAD
-          {/* RIGHT: Form */}
-          <div className={`lg:w-[55%] ${rightBg} flex flex-col p-6`}>
-            {mode === 'login' ? (
-              <Login
-                onSuccess={setUser}
-                onSwitchToSignUp={() => setMode('signup')}
-                navigateTo={navigateTo}
-              />
-            ) : (
-              <SignUp
-                onSuccess={setUser}
-                onSwitchToLogin={() => setMode('login')}
-                navigateTo={navigateTo}
-              />
-            )}
-=======
           {/* RIGHT: Form — same padding so headers/footers align with left */}
           <div className={`lg:w-[55%] ${rightBg} flex flex-col p-6 ${cardText}`}>
             <div
@@ -136,7 +113,6 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
                 )}
               </button>
             </div>
->>>>>>> main
           </div>
         </div>
       </div>

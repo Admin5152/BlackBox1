@@ -29,28 +29,15 @@ export const signUp = async (
         email: user.email
       });
 
-    try {
-      // Create user profile
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: user.id,
-          name: name,
-          email: email,
-          role: role
-        });
-
-      if (profileError) {
-        console.error('Profile creation error:', profileError);
-        // We don't throw here to ensure the user still gets the auth success
-      }
-    } catch (e) {
-      console.warn('Profile insertion was skipped or failed:', e);
+    if (profileError) {
+      console.error('Profile creation error:', profileError);
+      // We don't throw here to ensure the user still gets the auth success
     }
   }
 
   return data;
 };
+
 
 export const signIn = async (email: string, password: string) => {
   const { data, error } = await supabase.auth.signInWithPassword({
