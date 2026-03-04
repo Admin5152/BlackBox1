@@ -1,5 +1,5 @@
 
-export type Category = 'iPhone' | 'Laptop' | 'Accessories' | 'Gaming' | 'Audio' | 'Trades';
+export type Category = 'iPhone' | 'Laptop' | 'Accessories' | 'Gaming' | 'Audio';
 
 export interface ProductVariant {
   name: string; // e.g., "Color", "Storage"
@@ -27,11 +27,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  phone?: string;
+  password: String,
   role: 'user' | 'admin';
-  address?: string;
   wishlist?: string[]; // Array of product IDs
-  avatarLetter?: string;
 }
 
 export interface CartItem extends Product {
@@ -48,13 +46,6 @@ export interface Order {
   status: 'Pending' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled';
   date: string;
   paymentMethod: string;
-  tracking_number?: string;
-  estimated_delivery?: string;
-  actual_delivery?: string;
-  shipping_address?: string;
-  payment_status?: 'pending' | 'paid' | 'failed' | 'refunded';
-  shipping_method?: string;
-  shipping_cost?: number;
 }
 
 export interface RepairRequest {

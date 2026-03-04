@@ -1,5 +1,5 @@
 import React from 'react';
-import { Menu, User as UserIcon, Wrench, ShoppingCart, Home, ShoppingBag, RefreshCcw, Sun, Moon, MessageCircle, Settings } from 'lucide-react';
+import { Menu, User as UserIcon, Wrench, ShoppingCart, Home, ShoppingBag, RefreshCcw, Sun, Moon } from 'lucide-react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { User, CartItem } from '../types';
 
@@ -42,67 +42,36 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItemClass = (path: string) => {
     const active = location.pathname === path;
     if (isLight) {
-      return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${active ? 'bg-black text-white shadow-md' : 'text-black/60 hover:text-black hover:bg-black/5'
-        }`;
-    }
-    return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${active ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.25)]' : 'text-white/40 hover:text-white hover:bg-white/5 hover:shadow-[0_0_16px_rgba(205,160,50,0.5)]'
+      return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${
+        active ? 'bg-black text-white shadow-md' : 'text-black/60 hover:text-black hover:bg-black/5'
       }`;
+    }
+    return `flex items-center gap-2 px-6 py-3 rounded-xl transition-all duration-300 text-[11px] font-black uppercase tracking-widest ${
+      active ? 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.25)]' : 'text-white/40 hover:text-white hover:bg-white/5 hover:shadow-[0_0_16px_rgba(205,160,50,0.5)]'
+    }`;
   };
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-[100] h-16 sm:h-20 lg:h-24 flex items-center border-b backdrop-blur-3xl no-print ${isLight ? 'border-black/10 bg-[#FAFAFA]/95' : 'border-white/5'}`}
+      className={`sticky top-0 z-[60] h-16 sm:h-20 lg:h-24 flex items-center border-b backdrop-blur-3xl no-print ${isLight ? 'border-black/10 bg-[#FAFAFA]/95' : 'border-white/5'}`}
       style={isLight ? undefined : { backgroundColor: 'rgba(18,18,18,0.95)' }}
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between gap-3">
-        <div className="flex items-center gap-4">
-          {location.pathname === '/admin' && (
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className={`p-2.5 rounded-full transition-all ${isLight ? 'text-black/60 hover:text-black hover:bg-black/5' : 'text-white/40 hover:text-white hover:bg-white/5'}`}
-              aria-label="Toggle sidebar"
-            >
-              <Menu size={20} />
-            </button>
-          )}
-          <Link to="/" className="flex items-center gap-3 group transition-opacity">
-            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center ${isLight ? 'bg-black text-white' : 'bg-white text-black'}`}>
-              <ViewfinderLogo />
-            </div>
-            <div className="hidden sm:block">
-              <h1 className={`text-lg font-black tracking-tighter leading-none ${isLight ? 'text-black' : 'text-white'}`}>BLACKBOX</h1>
-              <p className={`text-[9px] font-black tracking-[0.3em] uppercase ${isLight ? 'text-black/50' : 'text-white/50'}`}></p>
-            </div>
-          </Link>
-        </div>
+        <Link to="/" className="flex items-center gap-3 group transition-opacity">
+          <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-lg flex items-center justify-center ${isLight ? 'bg-black text-white' : 'bg-white text-black'}`}>
+            <ViewfinderLogo />
+          </div>
+          <div className="hidden sm:block">
+            <h1 className={`text-lg font-black tracking-tighter leading-none ${isLight ? 'text-black' : 'text-white'}`}>BLACKBOX</h1>
+            <p className={`text-[9px] font-black tracking-[0.3em] uppercase ${isLight ? 'text-black/50' : 'text-white/50'}`}></p>
+          </div>
+        </Link>
 
         <div className="hidden lg:flex items-center gap-1">
           <Link to="/" className={navItemClass('/')}><Home size={16} /> Home</Link>
-
-          <div className="relative group">
-            <Link to="/store" className={navItemClass('/store')}>
-              <ShoppingBag size={16} /> Products
-            </Link>
-
-            {/* Alibaba-style Dropdown Menu */}
-            <div className={`absolute top-[90%] left-0 w-48 pt-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-[100]`}>
-              <div className={`rounded-2xl shadow-[0_20px_40px_rgba(0,0,0,0.3)] border overflow-hidden flex flex-col backdrop-blur-xl ${isLight ? 'bg-white/95 border-black/10' : 'bg-[#121212]/95 border-white/10'}`}>
-                <Link to="/store" search={{ category: 'iPhone' } as any} className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${isLight ? 'text-black/70 hover:text-black hover:bg-black/5' : 'text-white/60 hover:text-white hover:bg-white/10'}`}>iPhone</Link>
-                <Link to="/store" search={{ category: 'Laptop' } as any} className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${isLight ? 'text-black/70 hover:text-black hover:bg-black/5' : 'text-white/60 hover:text-white hover:bg-white/10'}`}>Laptop</Link>
-                <Link to="/store" search={{ category: 'Accessories' } as any} className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${isLight ? 'text-black/70 hover:text-black hover:bg-black/5' : 'text-white/60 hover:text-white hover:bg-white/10'}`}>Accessories</Link>
-                <Link to="/store" search={{ category: 'Gaming' } as any} className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${isLight ? 'text-black/70 hover:text-black hover:bg-black/5' : 'text-white/60 hover:text-white hover:bg-white/10'}`}>Gaming</Link>
-                <Link to="/store" search={{ category: 'Audio' } as any} className={`px-5 py-3 text-[10px] font-black uppercase tracking-widest transition-colors ${isLight ? 'text-black/70 hover:text-black hover:bg-black/5' : 'text-white/60 hover:text-white hover:bg-white/10'}`}>Audio</Link>
-              </div>
-            </div>
-          </div>
-
+          <Link to="/store" className={navItemClass('/store')}><ShoppingBag size={16} /> Products</Link>
           <Link to="/trades" className={navItemClass('/trades')}><RefreshCcw size={16} /> Trades</Link>
           <Link to="/repair" className={navItemClass('/repair')}><Wrench size={16} /> Repairs</Link>
-          {user?.role === 'admin' && (
-            <Link to="/admin" className={navItemClass('/admin')}>
-              <Settings size={16} /> Dashboard
-            </Link>
-          )}
           <Link to="/cart" className={navItemClass('/cart')}>
             <ShoppingCart size={16} /> Cart
             {cartCount > 0 && (
@@ -121,11 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 : isLight ? 'bg-black text-white shadow-lg hover:bg-black/90' : 'bg-white text-black shadow-lg hover:brightness-90 hover:shadow-[0_0_20px_rgba(205,160,50,0.6)]'}
             `}
           >
-            {user?.avatarLetter ? (
-              <span className="w-4 h-4 flex items-center justify-center font-black animate-in zoom-in duration-300 italic">{user.avatarLetter}</span>
-            ) : (
-              <UserIcon size={16} />
-            )} {user ? 'Account' : 'Sign In'}
+            <UserIcon size={16} /> {user ? 'Account' : 'Sign In'}
           </Link>
         </div>
 
@@ -134,24 +99,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               type="button"
               onClick={() => setTheme(isLight ? 'dark' : 'light')}
-              className={`p-2.5 rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 ${isLight
-                ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
-                : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
-                }`}
+              className={`p-2.5 rounded-full border transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-[#CDA032] focus-visible:ring-offset-2 ${
+                isLight
+                  ? 'border-black/10 bg-black/5 text-black hover:bg-black/10'
+                  : 'border-white/10 bg-white/5 text-white hover:bg-white/10 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'
+              }`}
               aria-label={isLight ? 'Switch to dark mode' : 'Switch to light mode'}
             >
               {isLight ? <Moon size={18} /> : <Sun size={18} />}
             </button>
           )}
           <button
-            onClick={() => {
-              setIsMobileMenuOpen(true);
-              // This is where the mobile menu items would typically be rendered or passed to a mobile menu component.
-              // The provided Code Edit snippet seems to be a list of these items,
-              // but it was syntactically incorrect to place it directly inside the button's className.
-              // Assuming this list is meant to define the mobile menu's content,
-              // it's now defined in `mobileMenuItems` above.
-            }}
+            onClick={() => setIsMobileMenuOpen(true)}
             className={`lg:hidden p-2.5 sm:p-3 rounded-full transition-all ${isLight ? 'text-black/60 hover:text-black hover:bg-black/5' : 'text-white/40 hover:text-white hover:bg-white/5 hover:shadow-[0_0_14px_rgba(205,160,50,0.45)]'}`}
             aria-label="Open menu"
           >
@@ -210,8 +169,8 @@ export const Navbar: React.FC<NavbarProps> = ({
 //   </svg>
 // );
 
-// export const Navbar: React.FC<NavbarProps> = ({
-//   user, cart, searchQuery, setSearchQuery, setIsMobileMenuOpen
+// export const Navbar: React.FC<NavbarProps> = ({ 
+//   user, cart, searchQuery, setSearchQuery, setIsMobileMenuOpen 
 // }) => {
 //   const location = useLocation();
 //   const cartCount = cart.reduce((a, c) => a + c.quantity, 0);

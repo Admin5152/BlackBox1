@@ -40,13 +40,13 @@ export const Auth: React.FC<AuthProps> = ({ setUser, navigateTo }) => {
   return (
     <div className={`view-transition flex-1 h-full flex items-center justify-center pt-20 px-4 lg:pt-12 lg:px-6 lg:pb-6 overflow-auto ${isDark ? 'bg-black' : 'bg-[#F0F0F0]'}`}>
       {/* Single card: gridline-based layout — all divisions end at same top/bottom/center */}
-      <div className={`relative w-full max-w-[900px] overflow-hidden px-10 py-10 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
-        {/* Corner frame border — morphs with card resize */}
-        <div className="pointer-events-none absolute inset-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]">
-          <div className={`absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 rounded-tl-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
-          <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
-          <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
-          <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${frameBorder}`} />
+<div className={`relative w-full max-w-[900px] overflow-hidden px-4 py-6 sm:px-8 sm:py-8 md:px-10 md:py-10 ${isDark ? 'bg-[#0a0a0a]' : 'bg-transparent'}`}>
+        {/* Corner frame border */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className={`absolute top-4 left-4 w-16 h-16 border-t-2 border-l-2 rounded-tl-2xl ${frameBorder}`} />
+          <div className={`absolute top-4 right-4 w-16 h-16 border-t-2 border-r-2 rounded-tr-2xl ${frameBorder}`} />
+          <div className={`absolute bottom-4 left-4 w-16 h-16 border-b-2 border-l-2 rounded-bl-2xl ${frameBorder}`} />
+          <div className={`absolute bottom-4 right-4 w-16 h-16 border-b-2 border-r-2 rounded-br-2xl ${frameBorder}`} />
         </div>
         <div className="flex flex-col lg:flex-row">
           {/* LEFT: Brand */}
