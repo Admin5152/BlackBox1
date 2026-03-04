@@ -51,7 +51,7 @@ export const Login: React.FC<LoginProps> = ({
 
         try {
             // Try Supabase authentication first
-            const { user } = await signIn(formData.email, formData.password);
+            const user = await signIn(formData.email, formData.password);
 
             if (user) {
                 const profile = await getUserProfile(user.id);

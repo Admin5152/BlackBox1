@@ -46,7 +46,7 @@ export const signIn = async (email: string, password: string) => {
   });
 
   if (error) throw error;
-  return data;
+  return data.user;
 };
 
 export const signOut = async () => {
@@ -64,7 +64,7 @@ export const getUserProfile = async (userId: string) => {
     .from('profiles')
     .select('*')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   if (error) throw error;
   return data;
